@@ -1,0 +1,100 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    p
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-07;  // 1e-6 (last attempt to do)
+        relTol          0.05; // check it for steady-state solver
+    }
+
+    inertCharges
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+        maxIter         2;
+    }
+
+    "total_(Nickel|Manganese|Cobalt|NH3)"
+    {
+        $inertCharges;
+    }
+
+    "(M0|M1|M2|M3|M4|M5)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-15;
+        relTol          0;
+        minIter         1;
+    }
+
+    "(U|k|epsilon|omega)"
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-06;
+        relTol          0.05;
+    }
+}
+
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 2;
+    consistent      no;
+
+    CFD             true;
+    precipitation   false;
+
+    residualControl
+    {
+        p               1e-6;
+        U               1e-6;
+        "(k|epsilon|omega)" 1e-6;
+    }
+}
+
+RELAX_FACTOR    1e-5;
+
+relaxationFactors
+{
+    fields
+    {
+        p               0.3;
+        // "(M0|M1|M2|M3|M4|M5)"            1e-5;
+        // "total_(Nickel|Manganese|Cobalt|NH3)"   1e-5;
+        // inertCharges    1e-5;
+    }
+    equations
+    {
+        U               0.7; // 0.9 is more stable but 0.95 more convergent
+        "(k|epsilon|omega)" 0.7;
+        
+        "(M0|M1|M2|M3|M4|M5)"            $RELAX_FACTOR;
+        "total_(Nickel|Manganese|Cobalt|NH3)"   $RELAX_FACTOR;
+        inertCharges    $RELAX_FACTOR;
+    }
+}
+
+
+// ************************************************************************* //

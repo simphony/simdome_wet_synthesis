@@ -1,0 +1,2 @@
+recursive-include osp/wrappers/prec_nmc_wrappers/cases *
+recursive-include osp/wrappers/prec_nmc_wrappers *.npy

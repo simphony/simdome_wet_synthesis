@@ -1,0 +1,254 @@
+---
+author: "MuSyChEn research group at Politecnico di Torino"
+namespace: "prec_nmc"
+version: "1.0"
+ontology:
+
+  PrecNMCWrapper:
+    description: The wrapper for the precipitation of NMC Hydroxide
+    subclass_of:
+    - cuba.Wrapper
+
+  # ----------------------------- Relationships ----------------------------- #
+
+  hasPart:
+    default_rel: true
+    description: "relationship with the parts"
+    inverse: prec_nmc.isPartOf
+    subclass_of:
+    - cuba.activeRelationship
+
+  isPartOf:
+    description: "relationship with the container"
+    inverse: prec_nmc.hasPart
+    subclass_of:
+    - cuba.passiveRelationship
+
+  hasProperty:
+    description: "relationship with the properties"
+    inverse: prec_nmc.isPropertyOf
+    subclass_of:
+    - cuba.activeRelationship
+
+  isPropertyOf:
+    description: "relationship with the owner"
+    inverse: prec_nmc.hasProperty
+    subclass_of:
+    - cuba.passiveRelationship
+
+  # ------------------------------- Attributes ------------------------------ #
+
+  number:
+    subclass_of:
+    - cuba.attribute
+    datatype: INT
+
+  ID:
+    subclass_of:
+    - cuba.attribute
+    datatype: INT
+
+  value:
+    subclass_of:
+    - cuba.attribute
+    datatype: FLOAT
+
+  unit:
+    subclass_of:
+    - cuba.attribute
+    datatype: STRING
+
+  name:
+    subclass_of:
+    - cuba.attribute
+    datatype: STRING
+
+  # -------------------------------- Entities ------------------------------- #
+
+  AccuracyLevel:
+    subclass_of:
+    - cuba.Entity
+
+  SliderAccuracyLevel:
+    subclass_of:
+    - prec_nmc.AccuracyLevel
+    attributes:
+      prec_nmc.number: ~
+
+  # Reserved for any later potential use
+  Geometry:
+    subclass_of:
+    - cuba.Entity
+
+  Material:
+    subclass_of:
+    - cuba.Entity
+
+  SolidParticle:
+    subclass_of:
+    - prec_nmc.Material
+    - prec_nmc.hasProperty:
+        range: prec_nmc.Density
+        range: prec_nmc.MolecularWeight
+        range: prec_nmc.ShapeFactor
+        exclusive: true
+        cardinality: 0-1
+
+  Component:
+    subclass_of:
+    - cuba.Entity
+    - prec_nmc.hasPart:
+        range: prec_nmc.MolarConcentration
+        exclusive: true
+        cardinality: 0-1
+    - prec_nmc.isPartOf:
+        range: prec_nmc.Feed
+        exclusive: true
+        cardinality: 0-1
+    attributes:
+      prec_nmc.name: ~
+
+  Feed:
+    subclass_of:
+    - cuba.Entity
+    - prec_nmc.hasPart:
+        range: prec_nmc.FlowRate
+        exclusive: true
+        cardinality: 0-1
+    - prec_nmc.hasPart:
+        range: prec_nmc.Component
+        exclusive: true
+        cardinality: some
+    attributes:
+      prec_nmc.name: ~
+
+  Bin:
+    subclass_of:
+    - cuba.Entity
+    - prec_nmc.hasPart:
+        range: prec_nmc.ParticleDiameter
+        range: prec_nmc.ParticleVolumePercentage
+        exclusive: true
+        cardinality: 0-1
+    - prec_nmc.isPartOf:
+        range: prec_nmc.SizeDistribution
+        exclusive: true
+        cardinality: 0-1
+    attributes:
+      prec_nmc.number: ~
+
+  SizeDistribution:
+    subclass_of:
+    - cuba.Entity
+    - prec_nmc.hasPart:
+        range: prec_nmc.Bin
+        exclusive: true
+        cardinality: some
+
+  Compartment:
+    subclass_of:
+    - cuba.Entity
+    - prec_nmc.hasPart:
+        range: prec_nmc.Volume
+        range: prec_nmc.TurbulentDissipationRate
+        exclusive: true
+        cardinality: 0-1
+    - prec_nmc.hasPart:
+        range: prec_nmc.OutgoingFlux
+        range: prec_nmc.InletBoundaryFlux
+        range: prec_nmc.OutletBoundaryFlux
+        exclusive: true
+        cardinality: some
+    - prec_nmc.isPartOf:
+        range: prec_nmc.CompartmentNetwork
+        exclusive: true
+        cardinality: 0-1
+    attributes:
+      prec_nmc.ID: ~
+
+  CompartmentNetwork:
+    subclass_of:
+    - cuba.Entity
+    - prec_nmc.hasPart:
+        range: prec_nmc.Compartment
+        exclusive: true
+        cardinality: some
+
+  # -------------------------- Physical Quantities -------------------------- #
+
+  PhysicalQuantity:
+    subclass_of:
+    - cuba.Entity
+    attributes:
+      prec_nmc.value: ~
+      prec_nmc.unit: ~
+
+  Pressure:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  Temperature:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  Density:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  MolecularWeight:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity 
+
+  ShapeFactor:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity 
+
+  RotationalSpeed:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  MolarConcentration:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  FlowRate:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  OutgoingFlux:
+    subclass_of:
+    - prec_nmc.FlowRate
+    attributes:
+      prec_nmc.ID: ~  # ID of the destination compartment
+
+  InletBoundaryFlux:
+    subclass_of:
+    - prec_nmc.FlowRate
+    attributes:
+      prec_nmc.name: ~  # name of the feed inlet
+
+  OutletBoundaryFlux:
+    subclass_of:
+    - prec_nmc.FlowRate
+    attributes:
+      prec_nmc.name: ~  # name of the outlet
+
+  Volume:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  TurbulentDissipationRate:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  ParticleDiameter:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  ParticleVolumePercentage:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity
+
+  TapDensity:
+    subclass_of:
+    - prec_nmc.PhysicalQuantity

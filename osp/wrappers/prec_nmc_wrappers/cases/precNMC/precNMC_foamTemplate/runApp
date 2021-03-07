@@ -1,0 +1,31 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Script for running simulations
+# Example: ./Processing N
+# First argument N is the number of processors (integer). If 1, it uses the serial version of the code
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+application=$(getApplication)
+
+if [ $1 -eq 1 ]; then
+    echo "Running $application on $PWD"
+    $application > log.txt
+else
+    m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
+    
+    runApplication -overwrite decomposePar
+    
+    # runParallel $application
+    echo "Running $application in parallel on $PWD using $1 processes"
+    mpirun -np $1 --output-filename log $application -parallel > /dev/null 2>&1
+    # mpirun -np $1 $application -parallel > log.txt
+
+    if [ $? -eq 0 ]; then
+        runApplication -overwrite reconstructPar -newTimes
+        rm -rf processor*
+    fi
+fi
+

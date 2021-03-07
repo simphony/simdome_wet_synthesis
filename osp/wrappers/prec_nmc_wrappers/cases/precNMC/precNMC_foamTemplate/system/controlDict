@@ -1,0 +1,113 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoamPrecNMC;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+//     underRelaxationUpdate
+//     {
+//         type              timeActivatedFileUpdate;
+//         libs              ("libutilityFunctionObjects.so");
+//         fileToUpdate      "$FOAM_CASE/system/fvSolution";
+//         timeVsFile
+//         (
+//             (-1 "$FOAM_CASE/system/updatingFiles/fvSolution.0")  // 0.1
+//             (100 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 0.2
+//             (200 "$FOAM_CASE/system/updatingFiles/fvSolution.2") // 0.3
+//             (300 "$FOAM_CASE/system/updatingFiles/fvSolution.3") // 0.4
+//             (400 "$FOAM_CASE/system/updatingFiles/fvSolution.4") // 0.5
+//             (500 "$FOAM_CASE/system/updatingFiles/fvSolution.5") // 0.6
+//             (600 "$FOAM_CASE/system/updatingFiles/fvSolution.6") // 0.7
+
+//             (2000 "$FOAM_CASE/system/updatingFiles/fvSolution.0") // 0.1
+//             (2100 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 0.2
+//             (2200 "$FOAM_CASE/system/updatingFiles/fvSolution.2") // 0.3
+//             (2300 "$FOAM_CASE/system/updatingFiles/fvSolution.3") // 0.4
+//             (2400 "$FOAM_CASE/system/updatingFiles/fvSolution.4") // 0.5
+//             (2500 "$FOAM_CASE/system/updatingFiles/fvSolution.5") // 0.6
+//             (2600 "$FOAM_CASE/system/updatingFiles/fvSolution.6") // 0.7
+//         );
+//     }
+
+//     schemeChange
+//     {
+//         type              timeActivatedFileUpdate;
+//         libs              ("libutilityFunctionObjects.so");
+//         fileToUpdate      "$FOAM_CASE/system/fvSchemes";
+//         timeVsFile
+//         (
+//             (-1 "$FOAM_CASE/system/updatingFiles/fvSchemes.0")
+//             (2000 "$FOAM_CASE/system/updatingFiles/fvSchemes.1")
+//         );
+//     }
+
+    outletAverage
+    {
+        type            surfaceFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+
+        fields
+        (
+            M0 M1 M2 M3
+        );
+
+        operation       areaAverage;
+        regionType      patch;
+        name            outlet;
+        log             true;
+        writeFields     no;
+
+        writePrecision  15;
+        enabled         true;
+        log             true;
+        executeControl  timeStep;
+        executeInterval $endTime;
+        writeControl    timeStep;
+        writeInterval   $endTime;
+    }
+}
+
+// ************************************************************************* //

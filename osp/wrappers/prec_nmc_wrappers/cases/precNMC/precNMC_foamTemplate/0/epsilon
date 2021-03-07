@@ -1,0 +1,96 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      epsilon;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/include/input"
+
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform $internal_epsilon;
+
+boundaryField
+{
+    pitchbladewalls
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    rushtonwalls
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    reactorwalls
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    overflowwalls
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    connectingtube
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    inlet1
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    inlet-nh3
+    {
+        type            turbulentMixingLengthDissipationRateInlet;
+        mixingLength    $inlet_hydraulic_diameter;
+        value           $internalField;  // placeholder
+    }
+    inlet-naoh
+    {
+        type            turbulentMixingLengthDissipationRateInlet;
+        mixingLength    $inlet_hydraulic_diameter;
+        value           $internalField;  // placeholder
+    }
+    inlet-metals
+    {
+        type            turbulentMixingLengthDissipationRateInlet;
+        mixingLength    $inlet_hydraulic_diameter;
+        value           $internalField;  // placeholder
+    }
+    injectionpipeswalls
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform $backflow_epsilon;
+    }
+    top-and-baffles
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+    shaft
+    {
+        type            epsilonWallFunction;
+        value           $internalField;
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,42 @@
+/file/set-tui-version "20.2"
+/file/read-case "mesh_refinementLevel_6.msh"
+
+/file/read-macros "./include/input.scm"
+/file/read-macros "precNMC.scm"
+
+(create-plane-line)
+
+/define/units angular-velocity rpm
+/define/models/solver/pressure-based yes
+/define/models/steady yes
+/define/operating-conditions/gravity yes 0 0 -9.81
+/define/models/viscous/ke-standard yes
+
+/define/materials/copy fluid water-liquid
+/define/materials/change-create water-liquid water no no no no no no no no
+/define/materials/delete water-liquid
+
+/define/boundary-conditions/fluid liquidvolume yes water no no yes -1 no 0.0 no 0.0 no 0.0 no 0.0 no 0.0 no 0.0 no 0.0 no 0.0 no 0.0 no 1.0 none no no no no no
+(set-moving-zones '(impellerdisk impellerdisk2) 7706)
+
+/define/materials/delete air
+
+/mesh/modify-zones/zone-type impellerdisk-liquidvolume interior
+/mesh/modify-zones/zone-type impellerdisk2-liquidvolume interior
+/mesh/modify-zones/zone-type inlet1 wall
+
+/mesh/modify-zones/zone-name inlet1 inlet1wall
+/mesh/modify-zones/zone-name inlet2 inlet-metals
+/mesh/modify-zones/zone-name inlet3 inlet-nh3
+/mesh/modify-zones/zone-name inlet4 inlet-naoh
+
+(initialize-precNMC-flow)
+
+/solve/set/reporting-interval 1
+/define/profiles/update-interval 100000
+
+/solve/iterate 10
+
+/file/write-case-data "prec_nmc"
+
+/exit
