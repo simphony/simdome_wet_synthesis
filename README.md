@@ -1,20 +1,22 @@
-# prec_nmc
+# Wet Synthesis
+A collection of wrappers around solvers that simulate the wet-synthesis of Ni-Mn-Co Hydroxides 
 
 *Contact*: [Mohsen Shiea](mailto:mohsen.shiea@polito.it), 
+[Daniele Marchisio](mailto:daniele.marchisio@polito.it), 
 [Antonio Buffo](mailto:antonio.buffo@polito.it) and 
 [Gianluca Boccardo](mailto:gianluca.boccardo@polito.it) from the 
 Multiphase Systems and Chemical Engineering research group, Politecnico di Torino.
 
 **Index**
-- [prec_nmc](#prec_nmc)
-  - [OpenFOAM wrapper](#openfoamwrapper)
-  - [Fluent wrapper](#fluentwrapper)
-  - [Compatibility](#compatibility)
+- [Wet Synthesis](#Wet-Synthesis)
+  - [CFD-PBE Wrapper](#CFD-PBE-Wrapper)
+  - [Compartment Wrapper](#Compartment-Wrapper)
+  - [Compatibility](#Compatibility)
 
-## OpenFOAM wrapper
-
-## Fluent wrapper
-
+## CFD-PBE Wrapper
+This wrapper prepares a simulation case folder based on the user inputs and executes a solver for Computational Fluid Dynamics-Population Balance Equation (CFD-PBE) simulation of NMC hydroxide precipitation. Currently, there is only one CFD-PBE solver available, which is developed by using the OpenFOAM software. 
+## Compartment Wrapper
+This wrapper is aimed at simulating the NMC hydroxide precipitation in a pilot CSTR reactor, by using the compartment model. Currently, it can be used only to divide the reactor into the compartments.  
 ## Compatibility
 
 The following table describes the version compatibility between the [OSP core](https://github.com/simphony/osp-core) package and documentation presented in this project.

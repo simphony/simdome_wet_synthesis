@@ -11,8 +11,8 @@ setup(
     name=NAME,
     version=VERSION,
     author='MuSyChEn research group at Politecnico di Torino',
-    description='The PrecFOAM wrapper for SimDOME',
-    keywords='SimDOME, cuds, precipitation, NMC hydroxide',
+    description='A collection of wrappers for wet-phase synthesis of Ni-Mn-Co hydroxide',
+    keywords='SimDOME, CUDS, Precipitation, NMC hydroxide',
     long_description=README_TEXT,
     install_requires=[
         'osp-core>=' + OSP_CORE_MIN + ', <' + OSP_CORE_MAX,
@@ -21,5 +21,5 @@ setup(
     include_package_data=True,
     # entry_points={
     #     'wrappers':
-    #         'precfoam = osp.wrappers.prec_nmc_wrappers:PrecFoamSession'},
+    #         ''},
 )

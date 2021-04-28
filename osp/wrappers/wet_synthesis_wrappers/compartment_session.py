@@ -4,16 +4,17 @@ import shutil
 import math
 
 from osp.core.session import SimWrapperSession
-from osp.core.namespaces import prec_nmc
-from osp.wrappers.prec_nmc_wrappers.utils import reconstruct_log_norm_dist
+from osp.core.namespaces import wet_synthesis
+from osp.wrappers.wet_synthesis_wrappers.utils import read_compartment_data
+from osp.wrappers.wet_synthesis_wrappers.utils import find_compartment_by_id
 
 
-class PrecFoamSession(SimWrapperSession):
+class CompartmentSession(SimWrapperSession):
     """
-    Session class for simpleFoamPrecNMC solver
+    Session class for compartment model
     """
 
-    def __init__(self, engine="simpleFoamPrecNMC", case="precNMC",
+    def __init__(self, engine="fluent", case="precNMC",
                  delete_simulation_files=True, **kwargs):
         super().__init__(engine, **kwargs)
 
@@ -23,19 +24,16 @@ class PrecFoamSession(SimWrapperSession):
         # Engine specific initializations
         self._initialized = False
         self._case_template = os.path.join(
-            os.path.dirname(__file__), "cases", case, "precNMC_foamTemplate")
+            os.path.dirname(__file__), "cases", case, "precNMC_fluentTemplate")
         self._mesh_files = os.path.join(
             os.path.dirname(__file__), "cases", case, "meshFiles")
         self._case_dir = None
 
         # Set engine defaults
-        self._end_time = 2
-        self._write_interval = 1
-
-        self._num_moments = 4
+        self._end_time = 10
 
     def __str__(self):
-        return "OpenFoam session for NMC hydroxide precipitation solver"
+        return "A session for NMC hydroxide precipitation compartmental solver"
 
     def close(self):
         """ Invoked, when the session is being closed """
@@ -49,9 +47,10 @@ class PrecFoamSession(SimWrapperSession):
     def _run(self, root_cuds_object):
         """ Runs the engine """
         if self._initialized:
-            # print("\n{} started\n".format(self._engine))
+            # print("\n{} job started\n".format(self._engine))
             # retcode = subprocess.call(
-            #     [os.path.join(self._case_dir, "Allrun"), "1"],
+            #     ["fluent", "3d", "-cflush", "-g", "-t", "4",
+            #      "-i", "precNMC.jou"],
             #     cwd=self._case_dir)
 
             # The engine execution is disabled intentionally since
@@ -60,14 +59,14 @@ class PrecFoamSession(SimWrapperSession):
             retcode = 0
 
             if retcode == 0:
-                # print("\n{} finished successfully\n".format(self._engine))
+                # print("\n{} job finished successfully\n".format(self._engine))
                 print("\nDummy job finished\n")
             else:
-                print("\n{} terminated with exit code {:d}\n".format(
+                print("\n{} job terminated with exit code {:d}\n".format(
                     self._engine, retcode))
 
-            self._update_size_dist_cud(root_cuds_object)
-            print("Particle size distribution is updated\n")
+            self._update_compartment_cuds(root_cuds_object)
+            print("Compartment data is updated\n")
 
     # OVERRIDE
     def _load_from_backend(self, uids, expired=None):
@@ -102,16 +101,16 @@ class PrecFoamSession(SimWrapperSession):
 
         # Copy the template folder
         self._case_dir = os.path.join(
-            os.getcwd(), "simulation-precfoam-%s" % root_cuds_object.uid)
+            os.getcwd(),
+            "simulation-wetSynthCompartment-%s" % root_cuds_object.uid)
         shutil.copytree(self._case_template, self._case_dir)
 
-        constant_dir = os.path.join(self._case_dir, 'constant')
         input_dir = os.path.join(self._case_dir, 'include')
         os.makedirs(input_dir, exist_ok=True)
 
         # Extract data from CUDS
         accuracy_level = root_cuds_object.get(
-            oclass=prec_nmc.SliderAccuracyLevel)[0]
+            oclass=wet_synthesis.SliderAccuracyLevel)[0]
 
         # Select the mesh based on the accuracy level
         meshFileName = self._select_mesh(accuracy_level)
@@ -119,15 +118,7 @@ class PrecFoamSession(SimWrapperSession):
         # Copy the mesh file
         meshSourcePath = os.path.join(self._mesh_files, meshFileName)
         if os.path.isfile(meshSourcePath):
-            shutil.copy(meshSourcePath, constant_dir)
-        else:
-            raise Exception()
-
-        # Extract the files from .7z file, if it exists
-        meshFilePath = os.path.join(constant_dir, meshFileName)
-        if os.path.isfile(meshFilePath):
-            subprocess.run(
-                ["7z", "x", meshFileName], check=True, cwd=constant_dir)
+            shutil.copy(meshSourcePath, self._case_dir)
         else:
             raise Exception()
 
@@ -135,32 +126,18 @@ class PrecFoamSession(SimWrapperSession):
         dataDict = dict()
 
         # add the material
-        # material = root_cuds_object.get(oclass=prec_nmc.Material)[0]
+        # material = root_cuds_object.get(oclass=wet_synthesis.Material)[0]
 
         # Insert pressure into the input dictionary
         self._insert_data(
-            'Pressure', root_cuds_object, 'outlet_pressure', dataDict)
-
-        # Insert temperature into the input dictionary
-        self._insert_data(
-            'Temperature', root_cuds_object, 'temperature', dataDict)
+            'Pressure', root_cuds_object, 'outlet-pressure', dataDict)
 
         # Insert rotational speed into the input dictionary
         self._insert_data(
-            'RotationalSpeed', root_cuds_object, 'angular_velocity', dataDict,
-            conversionFactor=math.pi/30)
+            'RotationalSpeed', root_cuds_object, 'impeller-angular-velocity',
+            dataDict)
 
-        # Add the particle properties to the input dictionary
-        solidParticle = root_cuds_object.get(oclass=prec_nmc.SolidParticle)[0]
-
-        self._insert_data(
-            'Density', solidParticle, 'crystal_density', dataDict)
-        self._insert_data(
-            'MolecularWeight', solidParticle, 'crystal_MW', dataDict)
-        self._insert_data(
-            'ShapeFactor', solidParticle, 'shape_factor', dataDict)
-
-        for feed in root_cuds_object.get(oclass=prec_nmc.Feed):
+        for feed in root_cuds_object.get(oclass=wet_synthesis.Feed):
             self._insert_feed(feed, dataDict)
 
         # # check if setfieldsDict exists and then run it
@@ -181,52 +158,62 @@ class PrecFoamSession(SimWrapperSession):
 
         # Write the inputs in the include file
         self._write_dict(
-            dataDict, "input", "include", "include_original")
+            dataDict, "input.scm", "include", "include_original")
 
         self._initialized = True
 
-    def _update_size_dist_cud(self, root_cuds_object):
-        moments = self._extract_moments()
+    def _update_compartment_cuds(self, root_cuds_object):
 
-        print("Reconstructing the particle size distribution",
-              "with the following moments:\n", moments, "\n")
+        zone_id, zone_ave, zone_volume, \
+            origin_id, destination_id, flowrate, \
+            boundary_name, boundary_destination, boundary_flowrate = \
+            read_compartment_data(self._case_dir)
 
-        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
+        compartmentNetwork = root_cuds_object.get(
+            oclass=wet_synthesis.CompartmentNetwork)[0]
 
-        sizeDistribution = root_cuds_object.get(
-            oclass=prec_nmc.SizeDistribution)[0]
+        for (id_i, ave_i, volume_i) in \
+                zip(zone_id, zone_ave, zone_volume):
 
-        for i, (vol_percent, bin_size) in \
-                enumerate(zip(vol_percents, bin_sizes)):
-            bin_i = prec_nmc.Bin(number=i)
-            bin_i.add(
-                prec_nmc.ParticleDiameter(value=bin_size, unit='micrometer'),
-                prec_nmc.ParticleVolumePercentage(value=vol_percent, unit=''),
-                rel=prec_nmc.hasPart)
+            compartment_i = wet_synthesis.Compartment(ID=id_i)
+            compartment_i.add(
+                wet_synthesis.Volume(value=volume_i, unit='m3'),
+                wet_synthesis.TurbulentDissipationRate(
+                    value=ave_i, unit='m2/s3'),
+                rel=wet_synthesis.hasPart)
 
-            sizeDistribution.add(bin_i)
+            compartmentNetwork.add(compartment_i)
 
-    def _extract_moments(self):
-        """ Extract the average of moments at the outlet, which are
-            already calculated and saved by engine """
-        output_path = os.path.join(
-            self._case_dir, 'postProcessing', 'outletAverage', '0',
-            'surfaceFieldValue.dat')
+        for (origin_id_i, destination_id_i, flowrate_i) in \
+                zip(origin_id, destination_id, flowrate):
 
-        moments = list()
-        if os.path.isfile(output_path):
-            with open(output_path, "r") as f:
-                for line in f:
-                    key = line.split()[0] if line.split() else None
-                    if key == str(self._end_time):
-                        data_string = line.split()[1:]
-                        for i in range(len(data_string)):
-                            moments.append(float(data_string[i]))
-                        break
-        else:
-            raise Exception()
+            compartment_i = find_compartment_by_id(
+                origin_id_i, compartmentNetwork)
 
-        return moments
+            if origin_id_i == destination_id_i:
+                compartment_i.add(
+                    wet_synthesis.OutletBoundaryFlux(value=flowrate_i,
+                                                     unit='m3/s',
+                                                     name='outlet'),
+                    rel=wet_synthesis.hasPart)
+            else:
+                compartment_i.add(
+                    wet_synthesis.OutgoingFlux(value=flowrate_i,
+                                               unit='m3/s',
+                                               ID=destination_id_i),
+                    rel=wet_synthesis.hasPart)
+
+        for (name_i, destination_i, flowrate_i) in \
+                zip(boundary_name, boundary_destination, boundary_flowrate):
+
+            compartment_i = find_compartment_by_id(
+                destination_i, compartmentNetwork)
+
+            compartment_i.add(
+                wet_synthesis.InletBoundaryFlux(value=flowrate_i,
+                                                unit='m3/s',
+                                                name=name_i),
+                rel=wet_synthesis.hasPart)
 
     def _check_logfile(self):
         """ Prints the log of the simulation to the standard output """
@@ -242,7 +229,7 @@ class PrecFoamSession(SimWrapperSession):
 
         # Select mesh based on the accuracy level
         if 5 < refine_level and refine_level <= 10:
-            meshFileName = 'polyMesh_refinementLevel_{:d}.7z'.format(
+            meshFileName = 'mesh_refinementLevel_{:d}.msh'.format(
                 refine_level)
         else:
             # The values stored in the slider accuracy level should be
@@ -250,7 +237,7 @@ class PrecFoamSession(SimWrapperSession):
             meshFileName = None
 
         # This line will be removed when all grids are prepared
-        meshFileName = 'polyMesh_refinementLevel_6.7z'
+        meshFileName = 'mesh_refinementLevel_6.msh'
 
         return meshFileName
 
@@ -258,7 +245,7 @@ class PrecFoamSession(SimWrapperSession):
                      conversionFactor=1.0, attribute='value'):
         """ This function inserts new entries into the dataDict. No need to
             return the updated dictionary because it is passed by reference """
-        entity = container.get(oclass=prec_nmc.get(entityName))[0]
+        entity = container.get(oclass=wet_synthesis.get(entityName))[0]
 
         inputValue = getattr(entity, attribute)
 
@@ -272,34 +259,12 @@ class PrecFoamSession(SimWrapperSession):
 
     def _insert_feed(self, feed, dataDict):
 
-        inputName = "flowrate_" + feed.name
+        inputName = "flowrate-" + feed.name
         self._insert_data(
             'FlowRate', feed, inputName, dataDict, conversionFactor=1/3.6e6)
 
-        total_conc = 0.0
-        for component in feed.get(oclass=prec_nmc.Component):
-            inputName = "conc_in_" + component.name
-            conc = self._insert_data(
-                'MolarConcentration', component, inputName, dataDict)
-            total_conc += conc
-
-        if feed.name == 'metals':
-            dataDict.update(
-                {
-                    'conc_in_inertCharge_metals': -2.0*total_conc
-                }
-            )
-        elif feed.name == 'naoh':
-            dataDict.update(
-                {
-                    'conc_in_inertCharge_naoh': total_conc
-                }
-            )
-        else:
-            pass
-
     def _write_dict(self, dataDict, file_name, folder, template_folder):
-        """Fill in a templated dictionary file with provided parameters"""
+        """Fill in a templated scheme file with provided parameters"""
         # Path to the template file
         template_path = os.path.join(
             self._case_dir, template_folder, file_name)
@@ -313,8 +278,8 @@ class PrecFoamSession(SimWrapperSession):
                 for line in template:
                     key = line.split()[0] if line.split() else None
                     if key in dataDict:
-                        line = "%s %s;" % (key, dataDict[key])
+                        line = "%s %s)" % (key, dataDict[key])
                         del dataDict[key]
                     print(line.strip(), file=f)
                 for key, value in dataDict.items():
-                    print("%s %s;" % (key, value), file=f)
+                    print("(define %s %s)" % (key, value), file=f)

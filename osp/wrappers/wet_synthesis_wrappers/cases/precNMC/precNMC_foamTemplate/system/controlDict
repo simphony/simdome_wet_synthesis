@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     simpleFoamPrecNMC;
+application     pisoPrecNMC;
 
 startFrom       latestTime;
 

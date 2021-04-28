@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Description: This script creates a docker image that includes the osp-core
-#              and the prec_nmc wrappers
+#              and the wet synthesis wrappers
 #
 # Run Information: This script should be run manually.
 
@@ -24,4 +24,4 @@ cd ..
 rm -rf temp_osp-core | true
 
 # Build docker image
-docker build -t simdome/prec_nmc --build-arg OSP_CORE_IMAGE=simphony/osp-core:${osp_tag} .
+docker build -t simdome/wet_synthesis --build-arg OSP_CORE_IMAGE=simphony/osp-core:${osp_tag} .

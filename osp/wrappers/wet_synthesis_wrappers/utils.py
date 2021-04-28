@@ -3,7 +3,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from osp.core.namespaces import prec_nmc
+from osp.core.namespaces import wet_synthesis
 import osp.core.utils.simple_search as search
 
 
@@ -110,11 +110,11 @@ def plot_size_dist(size_dist_cud):
     size = list()
     volume_percent = list()
 
-    for bin_i in size_dist_cud.get(oclass=prec_nmc.Bin):
+    for bin_i in size_dist_cud.get(oclass=wet_synthesis.Bin):
         number.append(bin_i.number)
-        size.append(bin_i.get(oclass=prec_nmc.ParticleDiameter)[0].value)
+        size.append(bin_i.get(oclass=wet_synthesis.ParticleDiameter)[0].value)
         volume_percent.append(
-            bin_i.get(oclass=prec_nmc.ParticleVolumePercentage)[0].value)
+            bin_i.get(oclass=wet_synthesis.ParticleVolumePercentage)[0].value)
 
     ordered_indices = np.argsort(np.array(number))
 
@@ -184,7 +184,7 @@ def find_compartment_by_id(compartment_id, compartmentNetwork):
     compartment = search.find_cuds_object(
         criterion=lambda x:
         compartment_id == x.ID if hasattr(x, 'ID') else False,
-        root=compartmentNetwork, rel=prec_nmc.hasPart,
+        root=compartmentNetwork, rel=wet_synthesis.hasPart,
         find_all=False, max_depth=1, current_depth=0)
 
     if not compartment:

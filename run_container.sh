@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER_NAME=prec-nmc
+CONTAINER_NAME=wet-synthesis
 
 docker container inspect -f '{{.State.Status}}' $CONTAINER_NAME > /dev/null 2>&1
 
@@ -9,5 +9,5 @@ if [ "$?" = "0" ]; then
 else
     docker run -it --rm --hostname=SIMDOME \
         --cap-drop=ALL --security-opt=no-new-privileges \
-        --name $CONTAINER_NAME simdome/prec_nmc:latest
+        --name $CONTAINER_NAME simdome/wet_synthesis:latest
 fi
