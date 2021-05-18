@@ -1,5 +1,5 @@
 # Wet Synthesis
-A collection of wrappers around solvers that simulate the wet-synthesis of Ni-Mn-Co Hydroxides 
+A collection of wrappers around solvers to simulate the wet-synthesis of Ni-Mn-Co Hydroxides 
 
 *Contact*: [Mohsen Shiea](mailto:mohsen.shiea@polito.it), 
 [Daniele Marchisio](mailto:daniele.marchisio@polito.it), 
