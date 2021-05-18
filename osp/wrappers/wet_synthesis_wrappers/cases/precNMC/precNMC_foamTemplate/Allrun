@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# Main script for running simulations
-# example of call: ./Allrun 3
-# First argument: number of processors to be used for calculation (Integer value)
-
-./preRun
-./runApp $1
-

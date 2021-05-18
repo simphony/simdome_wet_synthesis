@@ -1,6 +1,0 @@
-#           From                    To       Mass Flux           Volumetric Flux     Average
-                                             (kg/s)              (m3/s)              (m2/s3)
-
-0           inlet_nh3       --->    1        0.000000000         0.000000000         0.000000000
-1           inlet_metals    --->    9        0.000305101         0.000000306         0.000000124
-2           inlet_naoh      --->    10       0.000619741         0.000000621         0.000000077
