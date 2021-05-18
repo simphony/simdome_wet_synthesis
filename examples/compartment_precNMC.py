@@ -8,10 +8,12 @@ from osp.core.utils import Cuds2dot
 
 
 # create a wrapper session and run it
-with CompartmentSession(delete_simulation_files=False) as session:
+with CompartmentSession(
+        engine="fluent", case="precNMC", delete_simulation_files=False,
+        end_time=10) as session:
     wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
-    accuracy_level = wet_synthesis.SliderAccuracyLevel(number=6)
+    accuracy_level = wet_synthesis.SliderAccuracyLevel(number=1)
     wrapper.add(accuracy_level)
 
     pressure = wet_synthesis.Pressure(value=101325, unit='Pa')

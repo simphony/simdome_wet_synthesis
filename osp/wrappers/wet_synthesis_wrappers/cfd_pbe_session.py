@@ -15,6 +15,13 @@ class CfdPbeSession(SimWrapperSession):
 
     def __init__(self, engine="pisoPrecNMC", case="precNMC",
                  delete_simulation_files=True, **kwargs):
+
+        # Set engine defaults
+        self._end_time = kwargs.pop('end_time')
+        self._write_interval = kwargs.pop('write_interval')
+
+        self._num_moments = kwargs.pop('num_moments')
+
         super().__init__(engine, **kwargs)
 
         # Whether or not to store the generated files by the simulation engine
@@ -27,12 +34,6 @@ class CfdPbeSession(SimWrapperSession):
         self._mesh_files = os.path.join(
             os.path.dirname(__file__), "cases", case, "meshFiles")
         self._case_dir = None
-
-        # Set engine defaults
-        self._end_time = 2
-        self._write_interval = 1
-
-        self._num_moments = 4
 
     def __str__(self):
         return "A session for NMC hydroxide precipitation CFD-PBE solver"
@@ -49,25 +50,19 @@ class CfdPbeSession(SimWrapperSession):
     def _run(self, root_cuds_object):
         """ Runs the engine """
         if self._initialized:
-            # print("\n{} started\n".format(self._engine))
-            # retcode = subprocess.call(
-            #     [os.path.join(self._case_dir, "Allrun"), "1"],
-            #     cwd=self._case_dir)
-
-            # The engine execution is disabled intentionally since
-            # the mesh files and the solver are not provided
-            print("\nDummy job started\n")
-            retcode = 0
+            print("\n{} started\n".format(self._engine))
+            retcode = subprocess.call(
+                [os.path.join(self._case_dir, "Allrun"), "1"],
+                cwd=self._case_dir)
 
             if retcode == 0:
-                # print("\n{} finished successfully\n".format(self._engine))
-                print("\nDummy job finished\n")
+                print("\n{} finished successfully\n".format(self._engine))
+
+                self._update_size_dist_cud(root_cuds_object)
+                print("Particle size distribution is updated\n")
             else:
                 print("\n{} terminated with exit code {:d}\n".format(
                     self._engine, retcode))
-
-            self._update_size_dist_cud(root_cuds_object)
-            print("Particle size distribution is updated\n")
 
     # OVERRIDE
     def _load_from_backend(self, uids, expired=None):
@@ -251,9 +246,6 @@ class CfdPbeSession(SimWrapperSession):
             # The values stored in the slider accuracy level should be
             # from 6 to 10
             meshFileName = None
-
-        # This line will be removed when all grids are prepared
-        meshFileName = 'polyMesh_refinementLevel_6.7z'
 
         return meshFileName
 

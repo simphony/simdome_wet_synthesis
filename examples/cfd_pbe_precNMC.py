@@ -9,7 +9,9 @@ from osp.core.utils import Cuds2dot
 
 
 # create a wrapper session and run it
-with CfdPbeSession(delete_simulation_files=False) as session:
+with CfdPbeSession(
+        engine="pisoPrecNMC", case="precNMC", delete_simulation_files=False,
+        end_time=2, write_interval=1, num_moments=4) as session:
     wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
     accuracy_level = wet_synthesis.SliderAccuracyLevel(number=6)

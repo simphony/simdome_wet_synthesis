@@ -1,7 +1,6 @@
 import os
 import subprocess
 import shutil
-import math
 
 from osp.core.session import SimWrapperSession
 from osp.core.namespaces import wet_synthesis
@@ -16,6 +15,10 @@ class CompartmentSession(SimWrapperSession):
 
     def __init__(self, engine="fluent", case="precNMC",
                  delete_simulation_files=True, **kwargs):
+
+        # Set engine defaults
+        self._end_time = kwargs.pop('end_time')
+
         super().__init__(engine, **kwargs)
 
         # Whether or not to store the generated files by the simulation engine
@@ -28,9 +31,6 @@ class CompartmentSession(SimWrapperSession):
         self._mesh_files = os.path.join(
             os.path.dirname(__file__), "cases", case, "meshFiles")
         self._case_dir = None
-
-        # Set engine defaults
-        self._end_time = 10
 
     def __str__(self):
         return "A session for NMC hydroxide precipitation compartmental solver"
@@ -47,26 +47,19 @@ class CompartmentSession(SimWrapperSession):
     def _run(self, root_cuds_object):
         """ Runs the engine """
         if self._initialized:
-            # print("\n{} job started\n".format(self._engine))
-            # retcode = subprocess.call(
-            #     ["fluent", "3d", "-cflush", "-g", "-t", "4",
-            #      "-i", "precNMC.jou"],
-            #     cwd=self._case_dir)
-
-            # The engine execution is disabled intentionally since
-            # the mesh files and the solver are not provided
-            print("\nDummy job started\n")
-            retcode = 0
+            print("\n{} job started\n".format(self._engine))
+            retcode = subprocess.call(
+                ["fluent", "3d", "-g", "-t", "1", "-i", "precNMC.jou"],
+                cwd=self._case_dir)
 
             if retcode == 0:
-                # print("\n{} job finished successfully\n".format(self._engine))
-                print("\nDummy job finished\n")
+                print("\n{} job finished successfully\n".format(self._engine))
+
+                self._update_compartment_cuds(root_cuds_object)
+                print("Compartment data is updated\n")
             else:
                 print("\n{} job terminated with exit code {:d}\n".format(
                     self._engine, retcode))
-
-            self._update_compartment_cuds(root_cuds_object)
-            print("Compartment data is updated\n")
 
     # OVERRIDE
     def _load_from_backend(self, uids, expired=None):
@@ -228,16 +221,13 @@ class CompartmentSession(SimWrapperSession):
         refine_level = accuracy_level.number
 
         # Select mesh based on the accuracy level
-        if 5 < refine_level and refine_level <= 10:
+        if 0 < refine_level and refine_level <= 5:
             meshFileName = 'mesh_refinementLevel_{:d}.msh'.format(
-                refine_level)
+                refine_level + 5)
         else:
             # The values stored in the slider accuracy level should be
-            # from 6 to 10
+            # from 1 to 5
             meshFileName = None
-
-        # This line will be removed when all grids are prepared
-        meshFileName = 'mesh_refinementLevel_6.msh'
 
         return meshFileName
 
