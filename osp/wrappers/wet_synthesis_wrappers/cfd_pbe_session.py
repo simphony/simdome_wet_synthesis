@@ -198,13 +198,15 @@ class CfdPbeSession(SimWrapperSession):
     def _update_size_dist_cud(self, root_cuds_object):
         moments = self._extract_moments()
 
-        print("Reconstructing the particle size distribution",
-              "with the following moments:\n", moments, "\n")
+        if not self._dummy:
+            print("Reconstructing the particle size distribution",
+                  "with the following moments:\n", moments, "\n")
 
-        # This is used only for fast checking in the code development
-        if self._dummy:
+        else:  # This is used only for fast checking in the code development
             moments = [
                 4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
+            print("Reconstructing the particle size distribution",
+                  "with the following DUMMY moments:\n", moments, "\n")
 
         vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
 
