@@ -2,10 +2,12 @@ import os
 import subprocess
 import shutil
 import math
+import numpy as np
 
 from osp.core.session import SimWrapperSession
 from osp.core.namespaces import wet_synthesis
 from osp.wrappers.wet_synthesis_wrappers.utils import reconstruct_log_norm_dist
+from osp.wrappers.wet_synthesis_wrappers.utils import replace_char_in_keys
 
 
 class CfdPbeSession(SimWrapperSession):
@@ -21,6 +23,13 @@ class CfdPbeSession(SimWrapperSession):
         self._write_interval = kwargs.pop('write_interval')
 
         self._num_moments = kwargs.pop('num_moments')
+        # At the moment, the wrapper is not capable of adapting
+        # the case template to more/less moments
+        self._num_moments = 4
+
+        self._num_proc = kwargs.pop('num_proc')
+
+        self._dummy = kwargs.pop('dummy')
 
         super().__init__(engine, **kwargs)
 
@@ -29,10 +38,17 @@ class CfdPbeSession(SimWrapperSession):
 
         # Engine specific initializations
         self._initialized = False
-        self._case_template = os.path.join(
-            os.path.dirname(__file__), "cases", case, "precNMC_foamTemplate")
-        self._mesh_files = os.path.join(
-            os.path.dirname(__file__), "cases", case, "meshFiles")
+
+        self._case_source = os.path.join(
+            os.path.dirname(__file__), "cases", case)
+
+        self._case_template = None
+        self._exec = None
+        self._mesh_info = None
+        self._input_format = None
+        self._conversionFactors = None
+        self.engine_specialization(engine)
+
         self._case_dir = None
 
     def __str__(self):
@@ -51,9 +67,7 @@ class CfdPbeSession(SimWrapperSession):
         """ Runs the engine """
         if self._initialized:
             print("\n{} started\n".format(self._engine))
-            retcode = subprocess.call(
-                [os.path.join(self._case_dir, "Allrun"), "1"],
-                cwd=self._case_dir)
+            retcode = subprocess.call(self._exec, cwd=self._case_dir)
 
             if retcode == 0:
                 print("\n{} finished successfully\n".format(self._engine))
@@ -100,7 +114,7 @@ class CfdPbeSession(SimWrapperSession):
             os.getcwd(), "simulation-wetSynthCfdPbe-%s" % root_cuds_object.uid)
         shutil.copytree(self._case_template, self._case_dir)
 
-        constant_dir = os.path.join(self._case_dir, 'constant')
+        # constant_dir = os.path.join(self._case_dir, 'constant')
         input_dir = os.path.join(self._case_dir, 'include')
         os.makedirs(input_dir, exist_ok=True)
 
@@ -111,20 +125,18 @@ class CfdPbeSession(SimWrapperSession):
         # Select the mesh based on the accuracy level
         meshFileName = self._select_mesh(accuracy_level)
 
-        # Copy the mesh file
-        meshSourcePath = os.path.join(self._mesh_files, meshFileName)
-        if os.path.isfile(meshSourcePath):
-            shutil.copy(meshSourcePath, constant_dir)
-        else:
-            raise Exception()
+        meshSourcePath = os.path.join(
+            self._case_source, "meshFiles", meshFileName)
 
-        # Extract the files from .7z file, if it exists
-        meshFilePath = os.path.join(constant_dir, meshFileName)
-        if os.path.isfile(meshFilePath):
-            subprocess.run(
-                ["7z", "x", meshFileName], check=True, cwd=constant_dir)
+        meshTargerPath = os.path.join(
+            self._case_dir, "{:s}.{:s}".format(self._mesh_info["name"],
+                                               self._mesh_info["ext"]))
+
+        # Copy the mesh file
+        if os.path.isfile(meshSourcePath):
+            shutil.copy(meshSourcePath, meshTargerPath)
         else:
-            raise Exception()
+            raise Exception("Mesh file is missing")
 
         # Dictionary to insert the inputs
         dataDict = dict()
@@ -143,7 +155,7 @@ class CfdPbeSession(SimWrapperSession):
         # Insert rotational speed into the input dictionary
         self._insert_data(
             'RotationalSpeed', root_cuds_object, 'angular_velocity', dataDict,
-            conversionFactor=math.pi/30)
+            conversionFactor=self._conversionFactors["RotationalSpeed"])
 
         # Add the particle properties to the input dictionary
         solidParticle = root_cuds_object.get(
@@ -159,21 +171,23 @@ class CfdPbeSession(SimWrapperSession):
         for feed in root_cuds_object.get(oclass=wet_synthesis.Feed):
             self._insert_feed(feed, dataDict)
 
-        # # check if setfieldsDict exists and then run it
-        # setFieldsDictPath = os.path.join(
-        #     self._case_dir, "system", "setFieldsDict")
+        conc_mixed_nh3 = self._mixed_conc(
+            'nh3', 'nh3',
+            root_cuds_object.get(oclass=wet_synthesis.Feed))
 
-        # if os.path.isfile(setFieldsDictPath):
-        #     subprocess.run("setFields", check=True, cwd=self._case_dir)
+        dataDict.update({'conc_mixed_nh3': conc_mixed_nh3})
 
-        # # Set controlDict parameters
-        # control_params = dict()
-        # control_params["writeInterval"] = self._write_interval
-        # control_params["deltaT"] = self._delta_time
+        if self._end_time is None:
+            self._end_time = self._estimate_end_time(
+                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
+        dataDict.update({'end_time': self._end_time})
 
-        # # Write the controlDict dictionary
-        # self._write_dict(
-        #     control_params, "controlDict", "system", "system_original")
+        if self._write_interval is None:
+            self._write_interval = 100
+        dataDict.update({'write_interval': self._write_interval})
+
+        # replace the separator in the data based on the engine
+        replace_char_in_keys(dataDict, "_", self._input_format["sep"])
 
         # Write the inputs in the include file
         self._write_dict(
@@ -186,6 +200,11 @@ class CfdPbeSession(SimWrapperSession):
 
         print("Reconstructing the particle size distribution",
               "with the following moments:\n", moments, "\n")
+
+        # This is used only for fast checking in the code development
+        if self._dummy:
+            moments = [
+                4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
 
         vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
 
@@ -207,45 +226,46 @@ class CfdPbeSession(SimWrapperSession):
     def _extract_moments(self):
         """ Extract the average of moments at the outlet, which are
             already calculated and saved by engine """
-        output_path = os.path.join(
-            self._case_dir, 'postProcessing', 'outletAverage', '0',
-            'surfaceFieldValue.dat')
-
         moments = list()
-        if os.path.isfile(output_path):
-            with open(output_path, "r") as f:
-                for line in f:
-                    key = line.split()[0] if line.split() else None
-                    if key == str(self._end_time):
-                        data_string = line.split()[1:]
-                        for i in range(len(data_string)):
-                            moments.append(float(data_string[i]))
-                        break
-        else:
-            raise Exception()
+
+        if self._engine == "pisoPrecNMC":
+            output_path = os.path.join(
+                self._case_dir, 'postProcessing', 'outlet_average', '0',
+                'surfaceFieldValue.dat')
+
+            if os.path.isfile(output_path):
+                data = np.loadtxt(output_path, skiprows=4, unpack=False)
+                moments = data[-1, 1:self._num_moments + 1].tolist()
+            else:
+                raise Exception()
+
+        elif self._engine == "fluent":
+            print("Not available yet for this engine")
 
         return moments
 
     def _check_logfile(self):
         """ Prints the log of the simulation to the standard output """
-        sim_log_path = os.path.join(self._case_dir, "log.txt")
+        if self._engine == "pisoPrecNMC":
+            sim_log_path = os.path.join(self._case_dir, "log.txt")
 
-        with open(sim_log_path, "r") as logs:
-            for line in logs:
-                print(line)
+            with open(sim_log_path, "r") as logs:
+                for line in logs:
+                    print(line)
+        else:
+            print("Not implemented for the selected engine")
 
     def _select_mesh(self, accuracy_level):
 
         refine_level = accuracy_level.number
 
-        # Select mesh based on the accuracy level
-        if 5 < refine_level and refine_level <= 10:
-            meshFileName = 'polyMesh_refinementLevel_{:d}.7z'.format(
-                refine_level)
-        else:
-            # The values stored in the slider accuracy level should be
-            # from 6 to 10
-            meshFileName = None
+        ''' currently there is only one mesh '''
+        refine_level = 0
+
+        mesh_info = self._mesh_info
+
+        meshFileName = "{:s}_refinementLevel_{:d}.{:s}".format(
+            mesh_info["name"], refine_level, mesh_info["ext"])
 
         return meshFileName
 
@@ -269,32 +289,60 @@ class CfdPbeSession(SimWrapperSession):
 
         inputName = "flowrate_" + feed.name
         self._insert_data(
-            'FlowRate', feed, inputName, dataDict, conversionFactor=1/3.6e6)
+            'FlowRate', feed, inputName, dataDict,
+            conversionFactor=self._conversionFactors["FlowRate"])
 
-        total_conc = 0.0
         for component in feed.get(oclass=wet_synthesis.Component):
             inputName = "conc_in_" + component.name
-            conc = self._insert_data(
+            self._insert_data(
                 'MolarConcentration', component, inputName, dataDict)
-            total_conc += conc
 
-        if feed.name == 'metals':
-            dataDict.update(
-                {
-                    'conc_in_inertCharge_metals': -2.0*total_conc
-                }
-            )
-        elif feed.name == 'naoh':
-            dataDict.update(
-                {
-                    'conc_in_inertCharge_naoh': total_conc
-                }
-            )
-        else:
-            pass
+    def _mixed_conc(self, component_name, feed_name, feeds):
+
+        total_flowrate = 0.0
+        flowrate = None
+        conc = None
+        for feed in feeds:
+            total_flowrate += feed.get(
+                oclass=wet_synthesis.get('FlowRate'))[0].value
+
+            if feed.name == feed_name:
+                flowrate = feed.get(
+                    oclass=wet_synthesis.get('FlowRate'))[0].value
+
+                for component in feed.get(oclass=wet_synthesis.Component):
+                    if component.name == component_name:
+                        conc = component.get(oclass=wet_synthesis.get(
+                            'MolarConcentration'))[0].value
+
+        return conc * flowrate / total_flowrate
+
+    def _estimate_end_time(self, feeds, reactor_volume):
+
+        residence_time = self._residence_time(feeds, reactor_volume)
+
+        end_time = 5*residence_time
+
+        # round the estimated end time
+        if end_time > 1.0:
+            exponent = max(min(math.floor(math.log10(end_time)) - 1, 2), 0)
+            end_time = math.ceil(end_time / (10**exponent)) * (10**exponent)
+
+        return end_time
+
+    def _residence_time(self, feeds, reactor_volume):
+
+        total_flowrate = 0.0
+        for feed in feeds:
+            total_flowrate += feed.get(
+                oclass=wet_synthesis.get('FlowRate'))[0].value
+
+        total_flowrate *= self._conversionFactors["FlowRate"]
+
+        return reactor_volume / total_flowrate
 
     def _write_dict(self, dataDict, file_name, folder, template_folder):
-        """Fill in a templated dictionary file with provided parameters"""
+        """Fill in a templated input file with provided parameters"""
         # Path to the template file
         template_path = os.path.join(
             self._case_dir, template_folder, file_name)
@@ -303,13 +351,51 @@ class CfdPbeSession(SimWrapperSession):
         file_path = os.path.join(
             self._case_dir, folder, file_name)
 
+        input_format = self._input_format
+
         with open(template_path, "r") as template:
             with open(file_path, "w") as f:
                 for line in template:
                     key = line.split()[0] if line.split() else None
                     if key in dataDict:
-                        line = "%s %s;" % (key, dataDict[key])
+                        line = "%s %s%s" % (
+                            key, dataDict[key], input_format["end"])
                         del dataDict[key]
                     print(line.strip(), file=f)
                 for key, value in dataDict.items():
-                    print("%s %s;" % (key, value), file=f)
+                    print("%s%s %s%s" % (input_format["begin"], key, value,
+                                         input_format["end"]), file=f)
+
+    def engine_specialization(self, engine):
+        if engine == "pisoPrecNMC":
+            self._case_template = os.path.join(
+                self._case_source, "precNMC_foamTemplate")
+
+            self._exec = ["./Allrun", str(self._num_proc)]
+
+            self._mesh_info = {"name": "polyMesh", "ext": "zip"}
+
+            self._input_format = {"begin": "", "end": ";", "sep": "_"}
+
+            self._conversionFactors = {
+                "RotationalSpeed": math.pi/30,
+                "FlowRate": 1.0/3.6e6}
+
+        elif engine == "fluent":
+            self._case_template = os.path.join(
+                self._case_source, "precNMC_fluentTemplate")
+
+            self._exec = [
+                "fluent", "3d", "-g", "-t", str(self._num_proc), "-i",
+                "precNMC.jou"]
+
+            self._mesh_info = {"name": "mesh_fluent", "ext": "msh.gz"}
+
+            self._input_format = {"begin": "(define ", "end": ")", "sep": "-"}
+
+            self._conversionFactors = {
+                "RotationalSpeed": 1.0,
+                "FlowRate": 1.0/3.6e6}
+
+        else:
+            raise Exception("\nEngine \"" + engine + "\" not available\n")

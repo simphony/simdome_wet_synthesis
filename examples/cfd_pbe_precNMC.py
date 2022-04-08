@@ -11,10 +11,11 @@ from osp.core.utils import Cuds2dot
 # create a wrapper session and run it
 with CfdPbeSession(
         engine="pisoPrecNMC", case="precNMC", delete_simulation_files=False,
-        end_time=2, write_interval=1, num_moments=4) as session:
+        end_time=None, write_interval=None, num_moments=4, num_proc=1,
+        dummy=False) as session:
     wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
-    accuracy_level = wet_synthesis.SliderAccuracyLevel(number=6)
+    accuracy_level = wet_synthesis.SliderAccuracyLevel(number=0)
     wrapper.add(accuracy_level)
 
     pressure = wet_synthesis.Pressure(value=101325, unit='Pa')
@@ -23,7 +24,7 @@ with CfdPbeSession(
     temperature = wet_synthesis.Temperature(value=298.15, unit='K')
     wrapper.add(temperature)
 
-    rotationalSpeed = wet_synthesis.RotationalSpeed(value=-1005, unit='rpm')
+    rotationalSpeed = wet_synthesis.RotationalSpeed(value=200, unit='rpm')
     wrapper.add(rotationalSpeed)
 
     density = wet_synthesis.Density(value=3953, unit='kg/m^3')
@@ -36,39 +37,42 @@ with CfdPbeSession(
     solidParticle.add(shapeFactor, rel=wet_synthesis.hasProperty)
     wrapper.add(solidParticle)
 
-    ni_conc = wet_synthesis.MolarConcentration(value=1.14, unit='mol/lit')
-    mn_conc = wet_synthesis.MolarConcentration(value=0.38, unit='mol/lit')
-    co_conc = wet_synthesis.MolarConcentration(value=0.38, unit='mol/lit')
-    nh3_conc = wet_synthesis.MolarConcentration(value=13.36, unit='mol/lit')
-    naoh_conc = wet_synthesis.MolarConcentration(value=10, unit='mol/lit')
+    ni_conc = wet_synthesis.MolarConcentration(value=1.6, unit='mol/lit')
+    mn_conc = wet_synthesis.MolarConcentration(value=0.2, unit='mol/lit')
+    co_conc = wet_synthesis.MolarConcentration(value=0.2, unit='mol/lit')
+    so4_conc = wet_synthesis.MolarConcentration(value=2.0, unit='mol/lit')
+    nh3_conc = wet_synthesis.MolarConcentration(value=10, unit='mol/lit')
+    na_conc = wet_synthesis.MolarConcentration(value=5, unit='mol/lit')
 
     ni = wet_synthesis.Component(name='nickel')
     mn = wet_synthesis.Component(name='manganese')
     co = wet_synthesis.Component(name='cobalt')
+    so4 = wet_synthesis.Component(name='so4')
     nh3 = wet_synthesis.Component(name='nh3')
-    naoh = wet_synthesis.Component(name='naoh')
+    na = wet_synthesis.Component(name='na')
 
     ni.add(ni_conc, rel=wet_synthesis.hasPart)
     mn.add(mn_conc, rel=wet_synthesis.hasPart)
     co.add(co_conc, rel=wet_synthesis.hasPart)
+    so4.add(so4_conc, rel=wet_synthesis.hasPart)
     nh3.add(nh3_conc, rel=wet_synthesis.hasPart)
-    naoh.add(naoh_conc, rel=wet_synthesis.hasPart)
+    na.add(na_conc, rel=wet_synthesis.hasPart)
 
-    metal_flowRate = wet_synthesis.FlowRate(value=2.1977, unit='lit/hr')
-    nh3_flowRate = wet_synthesis.FlowRate(value=0.2184, unit='lit/hr')
-    naoh_flowRate = wet_synthesis.FlowRate(value=0.9171, unit='lit/hr')
+    metal_flowRate = wet_synthesis.FlowRate(value=1.5330924, unit='lit/hr')
+    nh3_flowRate = wet_synthesis.FlowRate(value=0.30666132, unit='lit/hr')
+    naoh_flowRate = wet_synthesis.FlowRate(value=1.226646, unit='lit/hr')
 
     metalFeed = wet_synthesis.Feed(name='metals')
     nh3Feed = wet_synthesis.Feed(name='nh3')
     naohFeed = wet_synthesis.Feed(name='naoh')
 
-    metalFeed.add(ni, mn, co, rel=wet_synthesis.hasPart)
+    metalFeed.add(ni, mn, co, so4, rel=wet_synthesis.hasPart)
     metalFeed.add(metal_flowRate, rel=wet_synthesis.hasPart)
 
     nh3Feed.add(nh3, rel=wet_synthesis.hasPart)
     nh3Feed.add(nh3_flowRate, rel=wet_synthesis.hasPart)
 
-    naohFeed.add(naoh, rel=wet_synthesis.hasPart)
+    naohFeed.add(na, rel=wet_synthesis.hasPart)
     naohFeed.add(naoh_flowRate, rel=wet_synthesis.hasPart)
 
     wrapper.add(metalFeed)

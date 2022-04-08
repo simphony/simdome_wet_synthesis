@@ -220,14 +220,11 @@ class CompartmentSession(SimWrapperSession):
 
         refine_level = accuracy_level.number
 
-        # Select mesh based on the accuracy level
-        if 0 < refine_level and refine_level <= 5:
-            meshFileName = 'mesh_refinementLevel_{:d}.msh'.format(
-                refine_level + 5)
-        else:
-            # The values stored in the slider accuracy level should be
-            # from 1 to 5
-            meshFileName = None
+        ''' currently there is only one mesh '''
+        refine_level = 0
+
+        meshFileName = 'mesh_fluent_refinementLevel_{:d}.msh.gz'.format(
+                refine_level)
 
         return meshFileName
 

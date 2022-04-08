@@ -5,9 +5,12 @@ import matplotlib.pyplot as plt
 
 from osp.core.namespaces import wet_synthesis
 import osp.core.utils.simple_search as search
+from osp.wrappers.wet_synthesis_wrappers.momentInversion import wheeler
 
 
 def reconstruct_log_norm_dist(moments):
+
+    check_moments(moments)
 
     maxSize = 5000
     minSize = maxSize/1e8
@@ -89,6 +92,18 @@ def reconstruct_log_norm_dist(moments):
         np.amin(non_zero_indices):np.amax(non_zero_indices) + 1]
 
     return np.trim_zeros(hist, trim='fb'), trimmedBinAveSize
+
+
+def check_moments(moments):
+    if len(moments) < 2:
+        raise Exception("\nInvalid number of moments\n")
+
+    else:
+        for moment in moments:
+            if not (moment > 0.0):
+                raise Exception("\nZero or negative moments are detected\n")
+
+        wheeler(moments)
 
 
 def plot_size_dist(size_dist_cud):
@@ -193,3 +208,10 @@ def find_compartment_by_id(compartment_id, compartmentNetwork):
         raise Exception()
 
     return compartment
+
+
+def replace_char_in_keys(dataDict, old_char, new_char):
+
+    for key in dataDict.copy():
+        if old_char in key:
+            dataDict[key.replace(old_char, new_char)] = dataDict.pop(key)
