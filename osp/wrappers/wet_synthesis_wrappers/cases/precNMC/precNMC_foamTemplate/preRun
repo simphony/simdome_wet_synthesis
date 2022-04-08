@@ -1,0 +1,43 @@
+#!/bin/bash
+
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+./makeMesh
+
+set -x
+
+if [ ! -d "0.bkp" ]; then
+    cp -r 0 0.bkp
+elif [ -d "0" ]; then
+    rm -rf 0
+    cp -r 0.bkp 0
+fi
+
+{ set +x; } 2>/dev/null
+
+runApplication -overwrite renumberMesh -overwrite
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    echo "\nError:"
+    echo "renumberMesh failed! Check the corresponding log file.\n" >&2
+    exit $ERROR_CODE
+fi
+
+# runApplication -overwrite topoSet
+# ERROR_CODE=$?
+# if [ $ERROR_CODE -ne 0 ]; then
+#     echo "\nError:"
+#     echo "topoSet failed! Check the corresponding log file.\n" >&2
+#     exit $ERROR_CODE
+# fi
+
+runApplication -overwrite setFields
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    echo "\nError:"
+    echo "setFields failed! Check the corresponding log file.\n" >&2
+    exit $ERROR_CODE
+fi

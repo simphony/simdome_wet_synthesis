@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Main script for running simulations
+# example of call: ./Allrun 3
+# First argument: number of processors to be used for calculation (Integer value)
+
+if [ ! -d "constant/polyMesh" ]; then
+    ./preRun
+fi
+
+if [ $1 -eq 1 ]; then
+    echo "Running $application on $PWD"
+    ./runApp $1 > log.txt
+else
+    m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
+
+    ./decompose
+
+    echo "Running $application in parallel on $PWD using $1 processes"
+    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        ./reconstruct
+
+        rm -rf processor*
+    fi
+fi

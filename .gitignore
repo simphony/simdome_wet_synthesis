@@ -1,6 +1,4 @@
-osp/wrappers/wet_synthesis_wrappers/cases/precNMC/meshFiles/*
 osp/wrappers/wet_synthesis_wrappers/cases/precNMC/precNMC_fluentTemplate/*
-osp/wrappers/wet_synthesis_wrappers/cases/precNMC/precNMC_foamTemplate/*
 simulation-wetSynth**/**
 .vscode
 __pycache__
@@ -11,6 +9,4 @@ dist
 *gv.png
 
 # exceptions
-!osp/wrappers/wet_synthesis_wrappers/cases/precNMC/meshFiles/.gitkeep
 !osp/wrappers/wet_synthesis_wrappers/cases/precNMC/precNMC_fluentTemplate/.gitkeep
-!osp/wrappers/wet_synthesis_wrappers/cases/precNMC/precNMC_foamTemplate/.gitkeep

@@ -1,0 +1,126 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      pbProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/include/input"
+
+populationBalance       on;
+
+highOrderScheme          off;
+
+numOfNodes              2;
+
+alphaMin                1e-20;
+
+dSmall
+List<scalar>
+(
+    1e-20 1e-20
+);
+
+quadrature
+{
+    type                QMOM;
+    inversionAlgorithm  adaptiveWheeler;
+}
+
+coordinates
+{
+    numOfCoordinates    1;
+}
+
+crystalProperties
+{
+    crystalDensity      $crystal_density;
+    crystalMW           $crystal_MW;
+}
+
+sources
+{
+    growth
+    {
+        type                   "powerLaw"; // powerLaw, constantRate
+        k                       2.51e-10;
+        n                       1;
+        // G0                      1e-4;
+    }
+
+    nucleation
+    {
+        type                    "classicalHeteroHomo"; // powerLaw, constantRate
+        KJ_1                    1.486e26;
+        BJ_1                    301.44;
+        KJ_2                    7.41e14;
+        BJ_2                    30.34;
+        // J0                      1e10;
+        
+        nucleateSize
+        {
+            type                "fixed";
+            Xc                  5e-9;
+        }
+    }
+
+    aggregation
+    {
+        // Brownian
+        // {
+            // type             "brownianMotion";
+            // T                298;
+            // rhoLiq           $liquid_density;
+
+            // efficiency
+            // {
+            //     type         "bridgeFormation";
+            //     A            2301441.817408508431293303;
+            //     rhoLiq       $liquid_density;
+            // }
+        // }
+
+        // TurbFluct
+        // {
+            // type             "turbulentCollision";
+            // CT               8.184647881347898392;
+
+            // efficiency
+            // {
+            //     type         "bridgeFormation";
+            //     A            2301441.817408508431293303;
+            //     rhoLiq       $liquid_density;
+            // }
+        // }
+    }
+
+    breakage
+    {
+        // TurbFluct
+        // {
+        //     type             "powerLaw"; // powerLaw, constantRate
+        //     C1               0.0;
+        //     C2               0.0;
+        //     C3               0.0;
+
+        //     daughterDistribution
+        //     {
+        //         // erosion, Laakkonen, parabolic, symmetric, uniform
+        //         type         "symmetric";
+        //     }
+        // }
+    }
+}
+
+
+// ************************************************************************* //

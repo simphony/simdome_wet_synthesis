@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/include/input"
+
+defaultFieldValues
+(
+    volScalarFieldValue total_Nickel 0.0
+    volScalarFieldValue total_Manganese 0.0
+    volScalarFieldValue total_Cobalt 0.0
+    volScalarFieldValue total_NH3 $conc_mixed_nh3
+    volScalarFieldValue total_Na 0.0
+    volScalarFieldValue total_SO4 0.0
+);
+
+regions
+(
+    cylinderToCell
+    {
+        p1 (0.023 0.023 0.032);
+        p2 (0.023 0.023 0.0471);
+        radius 0.00151;
+        fieldValues
+        (
+            volScalarFieldValue total_Nickel    $conc_in_nickel
+            volScalarFieldValue total_Manganese $conc_in_manganese
+            volScalarFieldValue total_Cobalt    $conc_in_cobalt
+            volScalarFieldValue total_SO4       $conc_in_so4
+            volScalarFieldValue total_NH3       0.0
+        );
+    }
+
+    cylinderToCell
+    {
+        p1 (-0.023 -0.023 0.032);
+        p2 (-0.023 -0.023 0.0471);
+        radius 0.00151;
+        fieldValues
+        (
+            volScalarFieldValue total_Na     $conc_in_na
+            volScalarFieldValue total_NH3    0.0
+        );
+    }
+
+    // cylinderToCell
+    // {
+    //     p1 (-0.023 0.023 0.032);
+    //     p2 (-0.023 0.023 0.0471);
+    //     radius 0.00151;
+    //     fieldValues
+    //     (
+    //         volScalarFieldValue total_NH3    $conc_in_nh3
+    //     );
+    // }
+
+    // cellToCell
+    // {
+    //     set region_active;
+    //     fieldValues
+    //     (
+    //         
+    //     );
+    // }
+);
+
+
+// ************************************************************************* //

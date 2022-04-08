@@ -1,0 +1,17 @@
+#!/bin/bash
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Add the required library path
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+application=$(getApplication)
+
+if [ $1 -eq 1 ]; then
+    $application
+else
+    $application -parallel
+fi
+
