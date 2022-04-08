@@ -14,7 +14,7 @@ RUN cd / && mkdir cmake && cd cmake && \
     tar -zxvf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
     ./bootstrap && \
-    make -j 6 && \
+    make -j $(nproc) && \
     make install && \
     cd / && rm -r cmake
 
@@ -25,7 +25,7 @@ RUN cd / && mkdir sundials && cd sundials && \
     mkdir instdir && \
     mkdir builddir && cd builddir && \
     cmake -DCMAKE_INSTALL_PREFIX=/sundials/instdir -DEXAMPLES_INSTALL_PATH=/sundials/instdir/examples -DENABLE_MPI=ON -DENABLE_LAPACK=ON -S ../cvode-${CVODE_VERSION} && \
-    make -j 6 && \
+    make -j $(nproc) && \
     make install && \
     cd .. && rm -r builddir cvode-${CVODE_VERSION} cvode-${CVODE_VERSION}.tar.gz
 
@@ -42,7 +42,7 @@ USER $user
 
 RUN ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && mkdir -p $FOAM_USER_APPBIN && mkdir -p $FOAM_USER_LIBBIN && \
     cd $HOME && git clone https://github.com/mulmopro/wet-synthesis-route.git && \
-    cd wet-synthesis-route/cfd_pbe_openfoam_solver && ./Allwmake -j 6"]
+    cd wet-synthesis-route/cfd_pbe_openfoam_solver && ./Allwmake -j $(nproc)"]
 
 RUN mkdir -p $HOME/simdome/wrappers/simdome_wet_synthesis && \
     chown -R $user:$user $HOME/simdome/wrappers/simdome_wet_synthesis
