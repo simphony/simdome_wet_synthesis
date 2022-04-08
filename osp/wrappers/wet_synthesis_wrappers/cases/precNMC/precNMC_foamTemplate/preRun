@@ -7,6 +7,11 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 ./makeMesh
 
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    exit $ERROR_CODE
+fi
+
 set -x
 
 if [ ! -d "0.bkp" ]; then
@@ -21,23 +26,23 @@ fi
 runApplication -overwrite renumberMesh -overwrite
 ERROR_CODE=$?
 if [ $ERROR_CODE -ne 0 ]; then
-    echo "\nError:"
-    echo "renumberMesh failed! Check the corresponding log file.\n" >&2
+    echo -e "\nError:"
+    echo -e "renumberMesh failed! Check the corresponding log file.\n" >&2
     exit $ERROR_CODE
 fi
 
 # runApplication -overwrite topoSet
 # ERROR_CODE=$?
 # if [ $ERROR_CODE -ne 0 ]; then
-#     echo "\nError:"
-#     echo "topoSet failed! Check the corresponding log file.\n" >&2
+#     echo -e "\nError:"
+#     echo -e "topoSet failed! Check the corresponding log file.\n" >&2
 #     exit $ERROR_CODE
 # fi
 
 runApplication -overwrite setFields
 ERROR_CODE=$?
 if [ $ERROR_CODE -ne 0 ]; then
-    echo "\nError:"
-    echo "setFields failed! Check the corresponding log file.\n" >&2
+    echo -e "\nError:"
+    echo -e "setFields failed! Check the corresponding log file.\n" >&2
     exit $ERROR_CODE
 fi
