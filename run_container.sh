@@ -9,5 +9,6 @@ if [ "$?" = "0" ]; then
 else
     docker run -it --rm --hostname=SIMDOME \
         --cap-drop=ALL --security-opt=no-new-privileges \
+        --cap-add=SYS_PTRACE \
         --name $CONTAINER_NAME simdome/wet_synthesis:latest
 fi
