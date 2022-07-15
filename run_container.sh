@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ARGS=$@
+
 CONTAINER_NAME=wet-synthesis
 
 docker container inspect -f '{{.State.Status}}' $CONTAINER_NAME > /dev/null 2>&1
