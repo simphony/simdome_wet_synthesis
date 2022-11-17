@@ -19,12 +19,9 @@ FoamFile
 
 defaultFieldValues
 (
-    volScalarFieldValue total_Nickel 0.0
-    volScalarFieldValue total_Manganese 0.0
-    volScalarFieldValue total_Cobalt 0.0
-    volScalarFieldValue total_NH3 $conc_mixed_nh3
-    volScalarFieldValue total_Na 0.0
-    volScalarFieldValue total_SO4 0.0
+    volScalarFieldValue p_env1 0.0
+    volScalarFieldValue p_env2 0.0
+    volScalarFieldValue p_env3 0.0
 );
 
 regions
@@ -36,11 +33,9 @@ regions
         radius 0.00151;
         fieldValues
         (
-            volScalarFieldValue total_Nickel    $conc_in_nickel
-            volScalarFieldValue total_Manganese $conc_in_manganese
-            volScalarFieldValue total_Cobalt    $conc_in_cobalt
-            volScalarFieldValue total_SO4       $conc_in_so4
-            volScalarFieldValue total_NH3       0.0
+            volScalarFieldValue p_env1 1.0
+            volScalarFieldValue p_env2 0.0
+            volScalarFieldValue p_env3 0.0
         );
     }
 
@@ -51,21 +46,24 @@ regions
         radius 0.00151;
         fieldValues
         (
-            volScalarFieldValue total_Na     $conc_in_na
-            volScalarFieldValue total_NH3    0.0
+            volScalarFieldValue p_env1 0.0
+            volScalarFieldValue p_env2 0.0
+            volScalarFieldValue p_env3 1.0
         );
     }
 
-    // cylinderToCell
-    // {
-    //     p1 (-0.023 0.023 0.032);
-    //     p2 (-0.023 0.023 0.0471);
-    //     radius 0.00151;
-    //     fieldValues
-    //     (
-    //         volScalarFieldValue total_NH3    $conc_in_nh3
-    //     );
-    // }
+    cylinderToCell
+    {
+        p1 (-0.023 0.023 0.032);
+        p2 (-0.023 0.023 0.0471);
+        radius 0.00151;
+        fieldValues
+        (
+            volScalarFieldValue p_env1 0.0
+            volScalarFieldValue p_env2 1.0
+            volScalarFieldValue p_env3 0.0
+        );
+    }
 
     // cellToCell
     // {

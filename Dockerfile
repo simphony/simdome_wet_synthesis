@@ -44,7 +44,8 @@ RUN ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && mkdir -p $FOAM_USER
     cd $HOME && git clone https://github.com/mulmopro/wet-synthesis-route.git && \
     cd wet-synthesis-route/cfd_pbe_openfoam_solver && \
     if [ \"$(cat /etc/os-release | grep VERSION_ID | perl -pe '($_)=/([0-9]+([.][0-9]+)+)/' | perl -pe '($_)=/([0-9]+)/')\" -eq \"18\" ]; \
-    then sed -i -e 's/nMetals, nMoments, nY, nCells, odeEndTime, //g' precSource.H; fi && ./Allwmake -j $(nproc)"]
+    then sed -i -e 's/nMetals, nMoments, nY, nCells, odeEndTime, //g' precSource.H; fi && ./Allwmake -j $(nproc) && \
+    cd $HOME/wet-synthesis-route/cfd_onlyEnv && ./Allwmake -j $(nproc)"]
 
 RUN mkdir -p $HOME/simdome/wrappers/simdome_wet_synthesis && \
     chown -R $user:$user $HOME/simdome/wrappers/simdome_wet_synthesis

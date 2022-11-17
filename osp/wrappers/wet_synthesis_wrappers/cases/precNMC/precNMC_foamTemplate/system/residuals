@@ -17,7 +17,7 @@ Description
 fields
 (
     total_Nickel total_Manganese total_Cobalt total_NH3 total_Na total_SO4
-    M0 M1 M2 M3
+    M0 M1 M2 M3 p_env1 p_env2 p_env3
 );
 
 // ************************************************************************* //

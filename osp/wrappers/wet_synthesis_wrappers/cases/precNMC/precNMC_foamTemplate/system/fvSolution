@@ -33,6 +33,16 @@ solvers
         // relTol          0;
     }
 
+    "p_env[1-3]"
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-08;  // 1e-6 (last attempt to do)
+        relTol          0.0; // check it for steady-state solver
+        nCellsInCoarsestLevel 500;
+        minIter         1;
+    }
+
     total_NH3
     {
         solver          GAMG;
@@ -88,8 +98,8 @@ PISO
 {
     nCorrectors     2;
     nNonOrthogonalCorrectors 2;
-    CFD             false;
-    precipitation   true;
+    CFD             true;
+    precipitation   false;
     pRefCell        0;
     pRefValue       0;
 

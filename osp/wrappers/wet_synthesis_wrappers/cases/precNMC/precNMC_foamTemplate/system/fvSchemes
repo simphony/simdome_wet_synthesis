@@ -33,9 +33,11 @@ divSchemes
 {
     default         none;
 
-    div(phi,U)        Gauss linearUpwind grad(U); // linearUpwind grad(U)
-    div(phi,k)        Gauss vanLeer; // vanLeer
-    div(phi,epsilon)  Gauss vanLeer; // vanLeer
+    div(phi,U)        Gauss upwind; // linearUpwind grad(U)
+    div(phi,k)        Gauss upwind; // vanLeer
+    div(phi,epsilon)  Gauss upwind; // vanLeer
+
+    "div\(phi,p_env[1-3]\)"    Gauss upwind;
 
     "div\(phi,total_(Nickel|Manganese|Cobalt)\)"    Gauss upwind; // changed
     "div\(phi,total_NH3\)"                          Gauss upwind; // changed

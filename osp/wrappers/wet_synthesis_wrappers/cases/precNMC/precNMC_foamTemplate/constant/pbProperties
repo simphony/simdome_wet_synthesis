@@ -79,7 +79,7 @@ sources
         // Brownian
         // {
             // type             "brownianMotion";
-            // T                298;
+            // T                $temperature;
             // rhoLiq           $liquid_density;
 
             // efficiency
@@ -109,9 +109,8 @@ sources
         // TurbFluct
         // {
         //     type             "powerLaw"; // powerLaw, constantRate
-        //     C1               0.0;
-        //     C2               0.0;
-        //     C3               0.0;
+        //     Cbr              1e-6;
+        //     gamma            1.0;
 
         //     daughterDistribution
         //     {

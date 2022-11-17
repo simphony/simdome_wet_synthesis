@@ -186,6 +186,10 @@ class CfdPbeSession(SimWrapperSession):
             self._write_interval = 100
         dataDict.update({'write_interval': self._write_interval})
 
+        times = self._estimate_time_intervals()
+        for i in range(np.size(times)):
+            dataDict.update({'t{}'.format(i): times[i]})
+
         # replace the separator in the data based on the engine
         replace_char_in_keys(dataDict, "_", self._input_format["sep"])
 
@@ -323,7 +327,7 @@ class CfdPbeSession(SimWrapperSession):
 
         residence_time = self._residence_time(feeds, reactor_volume)
 
-        end_time = 5*residence_time
+        end_time = 5*residence_time + 60
 
         # round the estimated end time
         if end_time > 1.0:
@@ -342,6 +346,29 @@ class CfdPbeSession(SimWrapperSession):
         total_flowrate *= self._conversionFactors["FlowRate"]
 
         return reactor_volume / total_flowrate
+
+    def _estimate_time_intervals(self):
+
+        cfd_time = 60
+
+        times = np.zeros(14)
+
+        times[0] = 10
+        times[1] = 30
+        times[2] = cfd_time - 0.01
+        times[3] = cfd_time + 0.009981
+        times[4] = cfd_time + 0.05991
+        times[5] = cfd_time + 0.19981
+        times[6] = cfd_time + 0.9991
+        times[7] = cfd_time + 2.9981
+        times[8] = cfd_time + 12.991
+        times[9] = cfd_time + 34.981
+        times[10] = cfd_time + 84.961
+        times[11] = cfd_time + 249.921
+        times[12] = cfd_time + 549.881
+        times[13] = cfd_time + 999.841
+
+        return times
 
     def _write_dict(self, dataDict, file_name, folder, template_folder):
         """Fill in a templated input file with provided parameters"""
