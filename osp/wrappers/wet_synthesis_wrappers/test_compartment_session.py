@@ -70,7 +70,7 @@ class TestCompartmentSession(SimWrapperSession):
         """ Runs the engine """
         if self._initialized:
             print("\n{} started\n".format(self._engine))
-            cwd = self._case_dir + 'cfdSimulation/'
+            cwd = self._case_dir + '/cfdSimulation/'
             retcode = subprocess.call(self._exec, cwd=cwd)
 
             if retcode == 0:
@@ -81,8 +81,7 @@ class TestCompartmentSession(SimWrapperSession):
                     self._engine, retcode))
 
 
-            cwd = self._case_dir + 'compartmentSimulation/'
-            self._add_division()
+            cwd = self._case_dir + '/compartmentSimulation/'
             retcode = subprocess.call(["./reactDivision"], cwd=cwd)
 
             if retcode == 0:
@@ -156,7 +155,7 @@ class TestCompartmentSession(SimWrapperSession):
             self._case_source, "meshFiles", meshFileName)
 
         meshTargerPath = os.path.join(
-            self._case_dir, "{:s}.{:s}".format(self._mesh_info["name"],
+            self._case_dir+'/cfdSimulation', "{:s}.{:s}".format(self._mesh_info["name"],
                                                self._mesh_info["ext"]))
 
         # Copy the mesh file
@@ -213,7 +212,7 @@ class TestCompartmentSession(SimWrapperSession):
             self._write_interval = 100
         dataDict.update({'write_interval': self._write_interval})
 
-        times = self._estimate_time_intervals(self._end_time)
+        times = self._estimate_time_intervals()
         for i in range(np.size(times)):
             dataDict.update({'t{}'.format(i): times[i]})
 
@@ -224,7 +223,9 @@ class TestCompartmentSession(SimWrapperSession):
         self._write_dict(
             dataDict, "input", "cfdSimulation/include", "cfdSimulation/include_original")
 
-        self._update_yaml("compartmentSimulation/caseSetup.yml", solidParticle, root_cuds_object)
+        self._update_yaml("/compartmentSimulation/caseSetup.yml", solidParticle, root_cuds_object)
+
+        self._add_division()
 
         self._initialized = True
 
@@ -475,28 +476,34 @@ class TestCompartmentSession(SimWrapperSession):
 
         nodes = self._num_moments / 2
 
-        with open(self._case_dir+file_name, 'r') as dict:
-            try:
-                caseSetup = yaml.load(dict)
-            except yaml.YAMLError as exc:
-                print(exc)
-        
-        caseSetup['liquidProp']['T'] = float(temp)
-        caseSetup['crystalProp']['density'] = int(density)
-        caseSetup['PBM']['numOfNodes'] = int(nodes)
+        f = open(self._case_dir+file_name, 'r')
+        lines = f.readlines()
+        f.close()
+
+        for i, line in enumerate(lines):
+            if 'T: 0' in line:
+                lines[i] = line.replace('0', str(temp))
+            if 'density: 0' in line:
+                lines[i] = line.replace('0', str(density))
+            if 'numOfNodes: 0' in line:
+                lines[i] = line.replace('0', str(nodes))
+
+        with open(self._case_dir+file_name, 'w') as f:
+            f.writelines(lines)
         
     def _add_division(self):
         """Copy file for reactor division and update time directory"""
 
         # Directory of files for reactor division
-        division_dir = "$HOME/wet-synthesis-route/reactor_network_model/reactor_division/"
+        division_dir = "/home/simdomeuser/wet-synthesis-route/reactor_network_model/reactor_division/"
+        target_dir = self._case_dir+'/compartmentSimulation/'
 
-        name_list = ['extract_info.py', 'react_division.py', 'importScripts/read_files.py']
-        dir_list = ['./', './', 'importScripts/']
+        name_list = ['reactDivision', 'extract_info.py', 'react_division.py', 'importScripts/read_files.py']
+        dir_list = ['', '', '', 'importScripts/']
 
         for (name, directory) in zip(name_list, dir_list):
-            shutil.copytree(division_dir+name, self._case_dir+directory)
-            f = open(self._case_dir+name, 'r')
+            shutil.copy(division_dir+name, target_dir+directory)
+            f = open(target_dir+name, 'r')
             lines = f.readlines()
             f.close()
 
@@ -504,14 +511,14 @@ class TestCompartmentSession(SimWrapperSession):
                 if "time_dir = '0'" in line:
                     lines[i] = line.replace("0", str(self._end_time))
             
-            with open(self._case_dir+name, 'w') as file:
+            with open(target_dir+name, 'w') as file:
                 file.writelines(lines)
 
 
     def engine_specialization(self, engine):
         if engine == "pisoPrecNMC":
             self._case_template = os.path.join(
-                self._case_source, "precNMC_compartmentTemplate/cfdSimulation")
+                self._case_source, "precNMC_compartmentTemplate")
 
             self._exec = ["./Allrun", str(self._num_proc)]
 

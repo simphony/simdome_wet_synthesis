@@ -45,7 +45,7 @@ liquidProp: &liquidProp
     viscosity: 0.001  # (Pa.s)
     nu: 0.000001  # kinematic viscosity (m2/s)
     rhoLiq: 998.2  # liquid density (kg/m3)
-    T: 298.15	# temperature in Kelvin
+    T: 0	# temperature in Kelvin
 
 feeds:
     metals:
@@ -61,7 +61,7 @@ feeds:
 EffectiveConcentration: 1e-7
 
 PBM:
-    numOfNodes: 2
+    numOfNodes: 0
     growth:
         type: PowerLaw  # Constant, PowerLaw, DiffusionControlled, BCF
         # G0: 1.0e-4  # constant growth rate
@@ -122,4 +122,4 @@ newtonRaphson:
     tol: 1.0e-7
 
 crystalProp:
-    density: 3953  # kg/m^3
+    density: 0  # kg/m^3
