@@ -13,7 +13,7 @@ from osp.wrappers.wet_synthesis_wrappers.utils import read_compartment_data
 from osp.wrappers.wet_synthesis_wrappers.utils import find_compartment_by_id
 
 
-class CompartmentSession(SimWrapperSession):
+class TestCompartmentSession(SimWrapperSession):
     """
     Session class for compartment model
     """

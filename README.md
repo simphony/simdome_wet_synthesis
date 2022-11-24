@@ -49,6 +49,7 @@ python -m osp.core.pico install ontology.wet_synthesis.yml
 ### wrappers:
 ```sh
 python3 setup.py install
+apt-get install graphviz
 ```
 More information can be found in the documentation for [installation of OSP core](https://simphony.readthedocs.io/en/latest/installation.html)
 

@@ -3,7 +3,7 @@ import sys
 import traceback
 import argparse
 
-from osp.wrappers.wet_synthesis_wrappers import CompartmentSession
+from osp.wrappers.wet_synthesis_wrappers import TestCompartmentSession
 from osp.wrappers.wet_synthesis_wrappers.utils import plot_size_dist
 from osp.core.namespaces import wet_synthesis
 from osp.core.utils import pretty_print
@@ -23,7 +23,7 @@ def main(argv):
     args, _ = parser.parse_known_args(argv)
 
     # create a wrapper session and run it
-    with CompartmentSession(
+    with TestCompartmentSession(
             engine="pisoPrecNMC", case="precNMC",
             delete_simulation_files=args.delete, end_time=args.endtime,
             write_interval=args.writeinterval, num_moments=4,
