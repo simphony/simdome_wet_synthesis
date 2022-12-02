@@ -206,6 +206,7 @@ class TestCompartmentSession(SimWrapperSession):
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
+        self._end_time = 10
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
@@ -433,10 +434,11 @@ class TestCompartmentSession(SimWrapperSession):
 
         times = np.zeros(14)
 
-        times[0] = 10
-        times[1] = 30
-        times[2] = cfd_time - 0.01
-        times[3] = cfd_time + self._end_time/3
+        # times[0] = 10
+        # times[1] = 30
+        # times[2] = cfd_time - 0.01
+        # times[3] = cfd_time + self._end_time/3
+        times[0] = 5
 
         return times
 
