@@ -106,7 +106,7 @@ functions
         timeVsFile
         (
             (-1 "$FOAM_CASE/system/updatingFiles/fvSolution.0") // 1e-6
-            ($t1 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 5e-6
+            ($t0 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 5e-6
             // ($t2 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 5e-6
         );
     }
