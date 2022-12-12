@@ -87,7 +87,8 @@ functions
         timeVsFile
         (
             (-1 "$FOAM_CASE/system/updatingFiles/controlDict.0") 
-            ($t2 "$FOAM_CASE/system/updatingFiles/controlDict.1") 
+            ($t0 "$FOAM_CASE/system/updatingFiles/controlDict.1") 
+            // ($t2 "$FOAM_CASE/system/updatingFiles/controlDict.1") 
         );
     }
 
@@ -99,23 +100,24 @@ functions
         timeVsFile
         (
             (-1 "$FOAM_CASE/constant/updatingFiles/fvSolution.0") // 1e-6
-            ($t2 "$FOAM_CASE/constant/updatingFiles/fvSolution.1") // 5e-6
+            ($t0 "$FOAM_CASE/constant/updatingFiles/fvSolution.1") // 5e-6
+            // ($t2 "$FOAM_CASE/constant/updatingFiles/fvSolution.1") // 5e-6
         );
     }
 
-    schemeChange
-    {
-        type              timeActivatedFileUpdate;
-        libs              ("libutilityFunctionObjects.so");
-        fileToUpdate      "$FOAM_CASE/system/fvSchemes";
-        timeVsFile
-        (
-            (-1 "$FOAM_CASE/system/updatingFiles/fvSchemes.0")
-            ($t0 "$FOAM_CASE/system/updatingFiles/fvSchemes.1")
-            ($t1 "$FOAM_CASE/system/updatingFiles/fvSchemes.2")
-            ($t3 "$FOAM_CASE/system/updatingFiles/fvSchemes.3")
-        );
-    }
+    // schemeChange
+    // {
+    //     type              timeActivatedFileUpdate;
+    //     libs              ("libutilityFunctionObjects.so");
+    //     fileToUpdate      "$FOAM_CASE/system/fvSchemes";
+    //     timeVsFile
+    //     (
+    //         (-1 "$FOAM_CASE/system/updatingFiles/fvSchemes.0")
+    //         ($t0 "$FOAM_CASE/system/updatingFiles/fvSchemes.1")
+    //         ($t1 "$FOAM_CASE/system/updatingFiles/fvSchemes.2")
+    //         ($t3 "$FOAM_CASE/system/updatingFiles/fvSchemes.3")
+    //     );
+    // }
 
     dissVolAverage
     {

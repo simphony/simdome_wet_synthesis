@@ -9,6 +9,7 @@ from osp.core.namespaces import wet_synthesis
 from osp.core.utils import pretty_print
 from osp.core.utils import Cuds2dot
 
+print('Hello')
 
 def main(argv):
 
