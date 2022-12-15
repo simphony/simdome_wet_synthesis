@@ -1,3 +1,2 @@
 from .cfd_pbe_session import CfdPbeSession
 from .compartment_session import CompartmentSession
-from .test_compartment_session import TestCompartmentSession
