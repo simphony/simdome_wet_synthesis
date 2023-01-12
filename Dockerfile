@@ -54,8 +54,12 @@ WORKDIR $HOME/simdome/wrappers/simdome_wet_synthesis
 
 ENV PATH=$PATH:$HOME/.local/bin
 
-RUN pip install matplotlib scipy \
+RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh && \
+    /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
+    conda update conda && conda create --name compartment && conda install mkl-service
+
+RUN pip install matplotlib scipy mpi4py \
     && pico install ontology.wet_synthesis.yml \
     && python setup.py install --user
 
-CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash" ]
+CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash && source activate compartment" ]
