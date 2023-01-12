@@ -4,6 +4,12 @@ LABEL maintainer="mohsen.shiea@polito.it"
 LABEL dockerfile.version="1.1"
 
 # Install requirements
+ENV CONDA_DIR /opt/conda
+RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O ~/conda.sh && \
+    /bin/bash ~/conda.sh -bfp /opt/conda && \
+    conda update conda && conda create --name compartment && conda install mkl-service
+ENV PATH=$CONDA_DIR/bin:$PATH
+
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \
     git graphviz wget build-essential g++ gfortran libgfortran5 openmpi-bin libopenmpi-dev make libssl-dev libblas-dev liblapack-dev \
     apt-transport-https software-properties-common openssh-client bash-completion bash-builtins libnss-wrapper vim nano tree curl unzip
@@ -53,10 +59,6 @@ COPY --chown=$user . $HOME/simdome/wrappers/simdome_wet_synthesis
 WORKDIR $HOME/simdome/wrappers/simdome_wet_synthesis
 
 ENV PATH=$PATH:$HOME/.local/bin
-
-RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh && \
-    /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
-    conda update conda && conda create --name compartment && conda install mkl-service
 
 RUN pip install matplotlib scipy mpi4py \
     && pico install ontology.wet_synthesis.yml \
