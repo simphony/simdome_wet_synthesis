@@ -226,9 +226,9 @@ class CompartmentSession(SimWrapperSession):
         self._write_dict(
             dataDict, "input", "cfdSimulation/include", "cfdSimulation/include_original")
 
-        self._update_yaml("/compartmentSimulation/caseSetup.yml", solidParticle, root_cuds_object)
+        self._update_files(dataDict)
 
-        self._add_division()
+        # self._add_division()
 
         self._initialized = True
 
@@ -474,30 +474,26 @@ class CompartmentSession(SimWrapperSession):
                     print("%s%s %s%s" % (input_format["begin"], key, value,
                                          input_format["end"]), file=f)
 
-    def _update_yaml(self, file_name, solidParticle, root):
-        """Modify yaml file caseSetup.yml for compartment simulation"""
+    def _update_files(self, file_name, dict):
+        """Modify files for compartment simulation"""
         
-        _temp = root.get(oclass=wet_synthesis.get("Temperature"))[0]
-        temp = getattr(_temp, 'value')
+        target_dir = os.path.join(self._case_dir, 'compartmentSimulation')
 
-        _density = solidParticle.get(oclass=wet_synthesis.get("Density"))[0]
-        density = getattr(_density, 'value')
-
-        _MW = solidParticle.get(oclass=wet_synthesis.get("MolecularWeight"))[0]
-        MW = getattr(_MW, 'value')
-
-        _KV = solidParticle.get(oclass=wet_synthesis.get("ShapeFactor"))[0]
-        KV = getattr(_KV, 'value')
+        temp = dict['temperature']
+        density = dict['density']
+        MW = dict['crystal_MW']
+        KV = dict['shape_factor']
 
         nodes = self._num_moments / 2
 
         concs = np.zeros(6)
-        for i, component in enumerate(root.get(oclass=wet_synthesis.Component)):
-            inputName = "conc_in_" + component.name
-            concs[i] = component.get(oclass=wet_synthesis.get(inputName))[0]
+        list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
+        for i, l in enumerate(list):
+            inputName = "conc_in_{}".format(l) 
+            concs[i] = dict[inputName]
         print(concs)
-        
-        f = open(self._case_dir+file_name, 'r')
+
+        f = open(target_dir+'/caseSetup.yml', 'r')
         lines = f.readlines()
         f.close()
 
@@ -518,29 +514,44 @@ class CompartmentSession(SimWrapperSession):
                 string = '[0.0, 0.0, 0.0, 0.0, '+str(concs[-1])+', 0.0]'
                 lines[i+1] = line.replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
 
-        with open(self._case_dir+file_name, 'w') as f:
+        with open(target_dir+'/caseSetup.yml', 'w') as f:
             f.writelines(lines)
             f.close()
 
-        f = open(self._case_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'r')
+        f = open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'r')
         lines2 = f.readlines()
         f.close()
         for i, line in enumerate(lines2):
             if 'self.kv = math.pi / 6' in line:
                 lines2[i] = line.replace('math.pi / 6', str(KV))
-        with open(self._case_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'w') as f:
+        with open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'w') as f:
             f.writelines(lines2)
             f.close()
 
-        f = open(self._case_dir+'/importScripts/init_run.py', 'r')
+        f = open(target_dir+'/importScripts/init_run.py', 'r')
         lines3 = f.readlines()
         f.close()
         for i, line in enumerate(lines3):
             if 'aMassCrystal = _MW' in line:
                 lines3[i] = line.replace('_MW', str(MW))
-        with open(self._case_dir+'/importScripts/init_run.py', 'w') as f:
+        with open(target_dir+'/importScripts/init_run.py', 'w') as f:
             f.writelines(lines3)
             f.close()
+
+        name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
+
+        for name in name_list:
+            f = open(target_dir+name, 'r')
+            lines = f.readlines()
+            f.close()
+
+            for i, line in enumerate(lines):
+                if "time_dir = '0'" in line:
+                    lines[i] = line.replace("0", str(self._end_time))
+            
+            with open(target_dir+name, 'w') as file:
+                file.writelines(lines)
+        
  
         
     def _add_division(self):
