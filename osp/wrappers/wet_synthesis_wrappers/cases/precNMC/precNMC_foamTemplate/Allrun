@@ -49,5 +49,3 @@ else
         fi
     fi
 fi
-
-postProcess -func writeCellVolumes -latestTime

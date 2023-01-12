@@ -491,12 +491,12 @@ class CompartmentSession(SimWrapperSession):
 
         nodes = self._num_moments / 2
 
-        concs = np.zeros(np.size(root.get(oclass=wet_synthesis.Component)))
-        print(np.size(concs))
+        concs = np.zeros(6)
         for i, component in enumerate(root.get(oclass=wet_synthesis.Component)):
             inputName = "conc_in_" + component.name
             concs[i] = component.get(oclass=wet_synthesis.get(inputName))[0]
-
+        print(concs)
+        
         f = open(self._case_dir+file_name, 'r')
         lines = f.readlines()
         f.close()
