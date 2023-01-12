@@ -27,17 +27,11 @@ stopAt          endTime;
 
 endTime         $end_time;
 
-deltaT          1e-4;
-
-adjustTimeStep  yes;
-
-maxCo           10;
-
-maxDeltaT       1e-2;
+deltaT          1;
 
 writeControl    runTime;
 
-writeInterval   10;
+writeInterval   8;
 
 purgeWrite      0;
 
@@ -96,11 +90,11 @@ functions
     {
         type              timeActivatedFileUpdate;
         libs              ("libutilityFunctionObjects.so");
-        fileToUpdate      "$FOAM_CASE/constant/odeSolver";
+        fileToUpdate      "$FOAM_CASE/system/fvSolution";
         timeVsFile
         (
-            (-1 "$FOAM_CASE/constant/updatingFiles/fvSolution.0") // 1e-6
-            ($t0 "$FOAM_CASE/constant/updatingFiles/fvSolution.1") // 5e-6
+            (-1 "$FOAM_CASE/system/updatingFiles/fvSolution.0") // 1e-6
+            ($t0 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 5e-6
             // ($t2 "$FOAM_CASE/constant/updatingFiles/fvSolution.1") // 5e-6
         );
     }

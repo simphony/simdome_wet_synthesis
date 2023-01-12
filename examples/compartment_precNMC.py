@@ -1,4 +1,4 @@
-# Example to use CFD-PBE wrapper
+# Example to use compartment wrapper
 import sys
 import traceback
 import argparse
@@ -98,15 +98,18 @@ def main(argv):
 
         Cuds2dot(wrapper).render()
 
+        sizeDistribution = wet_synthesis.SizeDistribution()
         compartmentNetwork = wet_synthesis.CompartmentNetwork()
         wrapper.add(compartmentNetwork)
 
+        pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
         pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
         try:
             # run the session
             session.run()
 
+            pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
         except Exception as e:

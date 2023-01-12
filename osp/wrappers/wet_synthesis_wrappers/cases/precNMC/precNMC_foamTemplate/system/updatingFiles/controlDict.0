@@ -31,7 +31,7 @@ deltaT          1e-5;
 
 writeControl    runTime;
 
-writeInterval   0.1;
+writeInterval   0.0011;
 
 purgeWrite      0;
 
@@ -102,7 +102,7 @@ functions
     {
         type              timeActivatedFileUpdate;
         libs              ("libutilityFunctionObjects.so");
-        fileToUpdate      "$FOAM_CASE/constant/odeSolver";
+        fileToUpdate      "$FOAM_CASE/system/fvSolution";
         timeVsFile
         (
             (-1 "$FOAM_CASE/system/updatingFiles/fvSolution.0") // 1e-6

@@ -165,7 +165,7 @@ def read_compartment_data(case_dir):
         case_dir, 'react_zone_flux.txt')
 
     zone_fromBoundary_filePath = os.path.join(
-        case_dir, 'react_zone_fromBoundary.txt')
+        case_dir, 'react_zone_feeds.txt')
 
     zone_id, zone_ave, zone_volume = np.loadtxt(
         zone_ave_filePath, dtype={'names': ('id', 'dissipation', 'volume'),

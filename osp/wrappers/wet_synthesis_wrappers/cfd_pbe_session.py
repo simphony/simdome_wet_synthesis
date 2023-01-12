@@ -188,11 +188,11 @@ class CfdPbeSession(SimWrapperSession):
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
-        self._end_time = 10
+        self._end_time = 0.0011
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
-            self._write_interval = 100
+            self._write_interval = 1
         dataDict.update({'write_interval': self._write_interval})
 
         times = self._estimate_time_intervals()
@@ -386,7 +386,7 @@ class CfdPbeSession(SimWrapperSession):
         # times[11] = cfd_time + 249.921
         # times[12] = cfd_time + 549.881
         # times[13] = cfd_time + 999.841
-        times[0] = 5
+        times[0] = 0.0008
 
         return times
 
