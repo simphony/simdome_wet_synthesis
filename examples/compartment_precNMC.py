@@ -113,6 +113,7 @@ def main(argv):
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
             print(wet_synthesis.Bin(number=0))
+            print(wrapper.get(oclass=wet_synthesis.Bin(number=0))[0])
             print(wet_synthesis.Bin(number=24))
             print(wet_synthesis.Bin(number=25))
             bins = wet_synthesis.Bin

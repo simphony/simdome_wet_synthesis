@@ -71,9 +71,9 @@ def main(argv):
 
         low_limit_epsilon = 1e-5
 
-        num_zones_out = 22
+        num_zones_out = 4
 
-        num_zones_in = 24
+        num_zones_in = 3
 
         ''' Mark the region of interest '''
 
