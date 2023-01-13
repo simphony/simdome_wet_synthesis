@@ -113,7 +113,20 @@ def main(argv):
             session.run()
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-            plot_size_dist(wrapper, session)
+            sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
+            num = []
+            for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
+                num.append(bins.number)
+
+            x_array = np.zeros(num[-1])
+            y_array = np.zeros(num[-1])
+            i = 0
+            for bins in sizeDistribution.get(oclass=wet_synthesis.SizeDistribution)[0]:
+                entity = bins.get(oclass=wet_synthesis.ParticleDiameter)[0]
+                x_array[i] = getattr(entity, 'value')
+                entity = bins.get(oclass=wet_synthesis.ParticleVolumePercentage)[0]
+                y_array[i] = getattr(entity, 'value')
+            plot_size_dist(x_array, y_array)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
@@ -123,21 +136,7 @@ def main(argv):
             # session._delete_simulation_files = True
 
 
-def plot_size_dist(wrapper, session):
-    sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-    num = []
-    for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
-        num.append(bins.number)
-
-    x_array = np.zeros(num[-1])
-    y_array = np.zeros(num[-1])
-    i = 0
-    for bins in sizeDistribution.get(oclass=wet_synthesis.SizeDistribution)[0]:
-        entity = bins.get(oclass=wet_synthesis.ParticleDiameter)[0]
-        x_array[i] = getattr(entity, 'value')
-        entity = bins.get(oclass=wet_synthesis.ParticleVolumePercentage)[0]
-        y_array[i] = getattr(entity, 'value')
-
+def plot_size_dist(x_array, y_array):
     fig1 = plt.figure(figsize=(6, 4))
     ax1 = fig1.add_subplot(1, 1, 1)
     for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
