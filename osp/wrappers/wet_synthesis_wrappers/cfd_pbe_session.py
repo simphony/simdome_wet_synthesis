@@ -224,6 +224,10 @@ class CfdPbeSession(SimWrapperSession):
                 4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
             print("Reconstructing the particle size distribution",
                   "with the following DUMMY moments:\n", moments, "\n")
+        moments = [
+            4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
+        print("Reconstructing the particle size distribution",
+                "with the following DUMMY moments:\n", moments, "\n")
 
         vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
 
@@ -386,7 +390,7 @@ class CfdPbeSession(SimWrapperSession):
         # times[11] = cfd_time + 249.921
         # times[12] = cfd_time + 549.881
         # times[13] = cfd_time + 999.841
-        times[0] = 0.0008
+        times[0] = 0.001
 
         return times
 
