@@ -112,9 +112,12 @@ def main(argv):
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-            bins = wrapper.get(oclass=wet_synthesis.Bin)
+            print(wet_synthesis.Bin(number=0))
+            print(wet_synthesis.Bin(number=24))
+            print(wet_synthesis.Bin(number=25))
+            bins = wet_synthesis.Bin
             print(bins)
-            pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
+            # pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
         except Exception as e:
             print(e)
