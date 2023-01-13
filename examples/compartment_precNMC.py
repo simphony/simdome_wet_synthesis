@@ -112,7 +112,7 @@ def main(argv):
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-            bins = wrapper.get(oclass=sizeDistribution.Bin)[0]
+            bins = wrapper.get(oclass=wet_synthesis.Bin)[0]
             print(bins)
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
