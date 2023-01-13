@@ -479,7 +479,6 @@ class CompartmentSession(SimWrapperSession):
         
         target_dir = os.path.join(self._case_dir, 'compartmentSimulation')
 
-        print(dict)
         temp = dict['temperature']
         density = dict['crystal_density']
         MW = dict['crystal_MW']
@@ -492,14 +491,11 @@ class CompartmentSession(SimWrapperSession):
         for i, l in enumerate(list):
             inputName = "conc_in_{}".format(l) 
             concs[i] = dict[inputName]
-        print(concs)
 
         f = open(target_dir+'/caseSetup.yml', 'r')
         lines = f.readlines()
         f.close()
-        print(np.size(lines))
         for i, line in enumerate(lines):
-            print(i, line)
             if 'T: 0' in line:
                 lines[i] = line.replace('0', str(temp))
             if 'density: 0' in line:
@@ -508,13 +504,13 @@ class CompartmentSession(SimWrapperSession):
                 lines[i] = line.replace('0', str(nodes))
             if 'metals:' in line:
                 string = '['+str(concs[0])+', '+str(concs[1])+', '+str(concs[2])+', 0.0, 0.0, '+str(concs[3])+']'
-                lines[i+1] = line.replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
             if 'nh3:' in line:
                 string = '[0.0, 0.0, 0.0, '+str(concs[4])+', 0.0, 0.0]'
-                lines[i+1] = line.replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
             if 'naoh:' in line:
                 string = '[0.0, 0.0, 0.0, 0.0, '+str(concs[-1])+', 0.0]'
-                lines[i+1] = line.replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
 
         with open(target_dir+'/caseSetup.yml', 'w') as f:
             f.writelines(lines)
