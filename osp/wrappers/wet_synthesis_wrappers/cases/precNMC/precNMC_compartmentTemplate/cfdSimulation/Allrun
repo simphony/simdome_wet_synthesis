@@ -42,10 +42,10 @@ else
     fi
 
     echo "Running $application in parallel on $PWD using $1 processes"
-    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+    mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
-    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+    mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
         ./reconstruct
@@ -58,8 +58,8 @@ fi
 
 postProcess -func writeCellVolumes -latestTime
 
-cp ../p_env1 2/
-cp ../p_env3 2/
-cp ../k 2/
-cp ../epsilon 2/
-cp ../phi 2/
+cp ../p_env1 20/
+cp ../p_env3 20/
+cp ../k 20/
+cp ../epsilon 20/
+cp ../phi 20/

@@ -8,7 +8,7 @@ import osp.core.utils.simple_search as search
 from osp.wrappers.wet_synthesis_wrappers.momentInversion import wheeler
 
 
-def reconstruct_log_norm_dist(moments):
+def reconstruct_log_norm_dist(moments, num):
 
     check_moments(moments)
 
@@ -23,17 +23,18 @@ def reconstruct_log_norm_dist(moments):
 
     # print(moments_Micron)
 
-    # meanOfNormDist = (4.0/3.0)*math.log(moments_Micron[3]) \
-    #     - (3.0/4.0)*math.log(moments_Micron[4])
+    if num ==6:
+        meanOfNormDist = (4.0/3.0)*math.log(moments_Micron[3]) \
+            - (3.0/4.0)*math.log(moments_Micron[4])
 
-    # sigmaOfNormDist = math.sqrt(math.log(moments_Micron[4]) / 2.0
-    #                             - (2.0/3.0)*math.log(moments_Micron[3]))
+        sigmaOfNormDist = math.sqrt(math.log(moments_Micron[4]) / 2.0
+                                    - (2.0/3.0)*math.log(moments_Micron[3]))
+    elif num == 4:
+        meanOfNormDist = (3.0/2.0)*math.log(moments_Micron[2]) \
+            - (2.0/3.0)*math.log(moments_Micron[3])
 
-    meanOfNormDist = (3.0/2.0)*math.log(moments_Micron[2]) \
-        - (2.0/3.0)*math.log(moments_Micron[3])
-
-    sigmaOfNormDist = math.sqrt((2.0/3.0)*math.log(moments_Micron[3])
-                                - math.log(moments_Micron[2]))
+        sigmaOfNormDist = math.sqrt((2.0/3.0)*math.log(moments_Micron[3])
+                                    - math.log(moments_Micron[2]))
 
     # x = np.linspace(minSize, maxSize, divisions)
     x = np.power(

@@ -113,7 +113,7 @@ def main(argv):
             session.run()
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-            plot_size_dist(wrapper)
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
@@ -122,35 +122,6 @@ def main(argv):
             traceback.print_exc()
             # session._delete_simulation_files = True
 
-
-def plot_size_dist(wrapper):
-    sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-    num = []
-    for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
-        num.append(bins.number)
-
-    x_array = np.zeros(num[-1])
-    y_array = np.zeros(num[-1])
-    i = 0
-    for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
-        entity = bins.get(oclass=wet_synthesis.ParticleDiameter)[0]
-        x_array[i] = getattr(entity, 'value')
-        entity = bins.get(oclass=wet_synthesis.ParticleVolumePercentage)[0]
-        y_array[i] = getattr(entity, 'value')
-
-    fig1 = plt.figure(figsize=(6, 4))
-    ax1 = fig1.add_subplot(1, 1, 1)
-    for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
-        label.set_fontsize(20)
-    ax1.plot(x_array, y_array, color='black', linewidth=1.5, zorder=2)
-    ax1.set_ylabel('Volume Percentage (%)', fontsize=18)
-    ax1.yaxis.labelpad = 5
-    ax1.set_xlabel(r"Particle size ($\mu$m)", fontsize=18)
-    fig1.tight_layout()
-    # plt.xlim(0.0, xLim1)
-    plt.ylim(bottom=0.0)
-    plt.savefig('volPercDist.png', bbox_inches='tight', pad_inches=0.1, dpi=220)
-    plt.close(fig1)
 
 if __name__ == "__main__":
 

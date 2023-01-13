@@ -83,16 +83,16 @@ class CompartmentSession(SimWrapperSession):
 
 
             cwd = self._case_dir + '/compartmentSimulation/'
-            # retcode = subprocess.call(["./reactDivision"], cwd=cwd)
+            retcode = subprocess.call(["./reactDivision"], cwd=cwd)
 
-            # if retcode == 0:
-            #     print("\nReactor division finished successfully\n")
+            if retcode == 0:
+                print("\nReactor division finished successfully\n")
 
-            #     self._update_compartment_cuds(root_cuds_object)
-            #     print("Compartment data is updated\n")
+                self._update_compartment_cuds(root_cuds_object)
+                print("Compartment data is updated\n")
 
-            # else:
-            #     print("\nReactor division terminated with exit code {:d}\n".format(retcode))
+            else:
+                print("\nReactor division terminated with exit code {:d}\n".format(retcode))
 
 
             retcode = subprocess.call(["mpirun", "-np", str(self._num_proc), "python3", "runPrecSolver.py"], cwd=cwd)
@@ -216,7 +216,7 @@ class CompartmentSession(SimWrapperSession):
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
-        self._end_time = 2
+        self._end_time = 20
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
@@ -257,7 +257,7 @@ class CompartmentSession(SimWrapperSession):
         print("Reconstructing the particle size distribution",
                 "with the following DUMMY moments:\n", moments, "\n")
 
-        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
+        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments, self._num_moments)
 
         sizeDistribution = root_cuds_object.get(
             oclass=wet_synthesis.SizeDistribution)[0]
@@ -459,7 +459,7 @@ class CompartmentSession(SimWrapperSession):
         # times[1] = 30
         # times[2] = cfd_time - 0.01
         # times[3] = cfd_time + self._end_time/3
-        times[0] = 1
+        times[0] = 10
 
         return times
 
