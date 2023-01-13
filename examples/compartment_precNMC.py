@@ -111,13 +111,14 @@ def main(argv):
             session.run()
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-            sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-            print(wet_synthesis.Bin(number=0))
-            print(wrapper.get(oclass=wet_synthesis.Bin(number=0))[0])
-            print(wet_synthesis.Bin(number=24))
-            print(wet_synthesis.Bin(number=25))
-            bins = wet_synthesis.Bin
-            print(bins)
+            sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)
+            num = []
+            for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
+                num.append(bins.number)
+                entity = bins.get(oclass=wet_synthesis.get('ParticleDiameter'))
+                value = getattr(entity, 'value')
+                print(value)
+            print(num)
             # pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
         except Exception as e:
