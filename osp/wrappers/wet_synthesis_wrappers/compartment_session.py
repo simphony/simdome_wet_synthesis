@@ -479,6 +479,7 @@ class CompartmentSession(SimWrapperSession):
         
         target_dir = os.path.join(self._case_dir, 'compartmentSimulation')
 
+        print(dict)
         temp = dict['temperature']
         density = dict['density']
         MW = dict['crystal_MW']
@@ -488,7 +489,6 @@ class CompartmentSession(SimWrapperSession):
 
         concs = np.zeros(6)
         list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
-        print(dict)
         for i, l in enumerate(list):
             inputName = "conc_in_{}".format(l) 
             concs[i] = dict[inputName]
