@@ -2,8 +2,5 @@
 
 # Main script for dividing reactor
 
-# Source tutorial run functions
-. $WM_PROJECT_DIR/bin/tools/RunFunctions
-
 python3 react_division.py
 python3 extract_info.py 
