@@ -117,7 +117,7 @@ def main(argv):
                 num.append(bins.number)
                 entity = bins.get(oclass=wet_synthesis.get('ParticleDiameter'))
                 print(entity)
-                entity = bins.get(oclass=wet_synthesis.ParticleDiameter)
+                entity = bins.get(oclass=wet_synthesis.ParticleDiameter)[0]
                 print(entity)
                 value = getattr(entity, 'value')
                 print(value)
