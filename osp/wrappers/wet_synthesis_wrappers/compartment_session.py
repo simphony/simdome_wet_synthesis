@@ -488,6 +488,7 @@ class CompartmentSession(SimWrapperSession):
 
         concs = np.zeros(6)
         list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
+        print(dict)
         for i, l in enumerate(list):
             inputName = "conc_in_{}".format(l) 
             concs[i] = dict[inputName]
@@ -496,8 +497,9 @@ class CompartmentSession(SimWrapperSession):
         f = open(target_dir+'/caseSetup.yml', 'r')
         lines = f.readlines()
         f.close()
-
+        print(np.size(lines))
         for i, line in enumerate(lines):
+            print(i, line)
             if 'T: 0' in line:
                 lines[i] = line.replace('0', str(temp))
             if 'density: 0' in line:
