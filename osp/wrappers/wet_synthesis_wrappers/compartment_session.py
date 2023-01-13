@@ -223,11 +223,12 @@ class CompartmentSession(SimWrapperSession):
         replace_char_in_keys(dataDict, "_", self._input_format["sep"])
 
         # Write the inputs in the include file
-        _dataDict = dataDict
+        compDict = dataDict
+        print(dataDict, compDict)
         self._write_dict(
             dataDict, "input", "cfdSimulation/include", "cfdSimulation/include_original")
 
-        self._update_files(_dataDict)
+        self._update_files(compDict)
 
         # self._add_division()
 
