@@ -481,7 +481,7 @@ class CompartmentSession(SimWrapperSession):
 
         print(dict)
         temp = dict['temperature']
-        density = dict['density']
+        density = dict['crystal_density']
         MW = dict['crystal_MW']
         KV = dict['shape_factor']
 
