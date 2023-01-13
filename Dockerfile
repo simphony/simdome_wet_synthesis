@@ -8,12 +8,6 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y \
     git graphviz wget build-essential g++ gfortran libgfortran5 openmpi-bin libopenmpi-dev make libssl-dev libblas-dev liblapack-dev \
     apt-transport-https software-properties-common openssh-client bash-completion bash-builtins libnss-wrapper vim nano tree curl unzip
 
-ENV CONDA_DIR /opt/conda
-RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O ~/conda.sh && \
-    /bin/bash ~/conda.sh -bfp /opt/conda && \
-    conda update conda && conda create --name compartment && conda install mkl-service
-ENV PATH=$CONDA_DIR/bin:$PATH
-
 RUN cd / && mkdir cmake && cd cmake && \
     CMAKE_VERSION=3.20.1 && \
     wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
@@ -64,4 +58,4 @@ RUN pip install matplotlib scipy mpi4py \
     && pico install ontology.wet_synthesis.yml \
     && python setup.py install --user
 
-CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash && source activate compartment" ]
+CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash" ]
