@@ -474,7 +474,7 @@ class CompartmentSession(SimWrapperSession):
                     print("%s%s %s%s" % (input_format["begin"], key, value,
                                          input_format["end"]), file=f)
 
-    def _update_files(self, file_name, dict):
+    def _update_files(self, dict):
         """Modify files for compartment simulation"""
         
         target_dir = os.path.join(self._case_dir, 'compartmentSimulation')
