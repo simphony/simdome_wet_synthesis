@@ -82,7 +82,7 @@ class CompartmentSession(SimWrapperSession):
                     self._engine, retcode))
 
 
-            # cwd = self._case_dir + '/compartmentSimulation/'
+            cwd = self._case_dir + '/compartmentSimulation/'
             # retcode = subprocess.call(["./reactDivision"], cwd=cwd)
 
             # if retcode == 0:
