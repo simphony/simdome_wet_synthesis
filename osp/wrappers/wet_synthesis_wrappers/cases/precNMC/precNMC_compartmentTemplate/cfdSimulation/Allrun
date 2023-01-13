@@ -58,8 +58,8 @@ fi
 
 postProcess -func writeCellVolumes -latestTime
 
-cp ../p_env1 10/
-cp ../p_env3 10/
-cp ../k 10/
-cp ../epsilon 10/
-cp ../phi 10/
+cp ../p_env1 2/
+cp ../p_env3 2/
+cp ../k 2/
+cp ../epsilon 2/
+cp ../phi 2/
