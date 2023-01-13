@@ -110,6 +110,8 @@ def main(argv):
             # run the session
             session.run()
 
+            print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 

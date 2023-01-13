@@ -252,6 +252,10 @@ class CompartmentSession(SimWrapperSession):
                 4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
             print("Reconstructing the particle size distribution",
                   "with the following DUMMY moments:\n", moments, "\n")
+        moments = [
+            4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
+        print("Reconstructing the particle size distribution",
+                "with the following DUMMY moments:\n", moments, "\n")
 
         vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
 
