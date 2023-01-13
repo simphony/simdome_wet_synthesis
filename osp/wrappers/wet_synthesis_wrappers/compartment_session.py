@@ -298,10 +298,12 @@ class CompartmentSession(SimWrapperSession):
 
     def _update_compartment_cuds(self, root_cuds_object):
 
+        filesPath = os.path.join(self._case_dir, 'compartmentSimulation')
+
         zone_id, zone_ave, zone_volume, \
             origin_id, destination_id, flowrate, \
             boundary_name, boundary_destination, boundary_flowrate = \
-            read_compartment_data(self._case_dir)
+            read_compartment_data(filesPath)
 
         compartmentNetwork = root_cuds_object.get(
             oclass=wet_synthesis.CompartmentNetwork)[0]
