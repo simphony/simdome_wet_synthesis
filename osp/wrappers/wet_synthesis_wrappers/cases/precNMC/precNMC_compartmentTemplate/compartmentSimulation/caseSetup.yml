@@ -47,7 +47,7 @@ liquidProp: &liquidProp
     viscosity: 0.001  # (Pa.s)
     nu: 0.000001  # kinematic viscosity (m2/s)
     rhoLiq: 998.2  # liquid density (kg/m3)
-    T: 0	# temperature in Kelvin
+    T: 0  # temperature in Kelvin
 
 feeds:
     metals:
