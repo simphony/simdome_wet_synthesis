@@ -4,6 +4,7 @@ import shutil
 import math
 import numpy as np
 import yaml
+import stat
 
 from osp.core.session import SimWrapperSession
 from osp.core.namespaces import wet_synthesis
@@ -143,8 +144,10 @@ class CompartmentSession(SimWrapperSession):
             "simulation-wetSynthCompartment-%s" % root_cuds_object.uid)
         shutil.copytree(self._case_template, self._case_dir)
 
-        cwd = os.path.join(self._case_dir, 'compartmentSimulation')
-        subprocess.call(["chmod", "a+wrx", "react*", "*.py"], cwd=cwd)
+        name_list = ['extract_info.py', 'react_division.py', 'reactDivision', 'runPrecSolver.py']
+        for name in name_list:
+            path = os.path.join(self._case_dir, 'compartmentSimulation', name)
+            os.chmod(path, stat.S_IRWXU, stat.S_IRWXG, stat.S_IRWXO)
 
         input_dir = os.path.join(self._case_dir, 'cfdSimulation/include')
         os.makedirs(input_dir, exist_ok=True)
@@ -211,7 +214,7 @@ class CompartmentSession(SimWrapperSession):
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
-        self._end_time = 40
+        self._end_time = 20
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
@@ -448,7 +451,7 @@ class CompartmentSession(SimWrapperSession):
         # times[1] = 30
         # times[2] = cfd_time - 0.01
         # times[3] = cfd_time + self._end_time/3
-        times[0] = 20
+        times[0] = 10
 
         return times
 
