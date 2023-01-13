@@ -148,8 +148,8 @@ class CompartmentSession(SimWrapperSession):
         for name in name_list:
             path = os.path.join(self._case_dir, 'compartmentSimulation', name)
             os.chmod(path, stat.S_IRWXU)
-            os.chmod(path, stat.S_IRWXG)
-            os.chmod(path, stat.S_IRWXO)
+            # os.chmod(path, stat.S_IRWXG)
+            # os.chmod(path, stat.S_IRWXO)
 
         input_dir = os.path.join(self._case_dir, 'cfdSimulation/include')
         os.makedirs(input_dir, exist_ok=True)
