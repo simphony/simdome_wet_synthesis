@@ -1,7 +1,9 @@
 # Example to use compartment wrapper
 import sys
+import numpy as np
 import traceback
 import argparse
+import matplotlib.pyplot as plt
 
 from osp.wrappers.wet_synthesis_wrappers import CompartmentSession
 from osp.wrappers.wet_synthesis_wrappers.utils import plot_size_dist
@@ -111,24 +113,44 @@ def main(argv):
             session.run()
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-            sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-            num = []
-            for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
-                num.append(bins.number)
-                entity = bins.get(oclass=wet_synthesis.get('ParticleDiameter'))
-                print(entity)
-                entity = bins.get(oclass=wet_synthesis.ParticleDiameter)[0]
-                print(entity)
-                value = getattr(entity, 'value')
-                print(value)
-            print(num)
-            # pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
+            plot_size_dist(wrapper, session)
+
+            pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
         except Exception as e:
             print(e)
             traceback.print_exc()
             # session._delete_simulation_files = True
 
+
+def plot_size_dist(wrapper, session):
+    sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
+    num = []
+    for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
+        num.append(bins.number)
+
+    x_array = np.zeros(num[-1])
+    y_array = np.zeros(num[-1])
+    i = 0
+    for bins in sizeDistribution.get(oclass=wet_synthesis.SizeDistribution)[0]:
+        entity = bins.get(oclass=wet_synthesis.ParticleDiameter)[0]
+        x_array[i] = getattr(entity, 'value')
+        entity = bins.get(oclass=wet_synthesis.ParticleVolumePercentage)[0]
+        y_array[i] = getattr(entity, 'value')
+
+    fig1 = plt.figure(figsize=(6, 4))
+    ax1 = fig1.add_subplot(1, 1, 1)
+    for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
+        label.set_fontsize(20)
+    ax1.plot(x_array, y_array, color='black', linewidth=1.5, zorder=2)
+    ax1.set_ylabel('Volume Percentage (%)', fontsize=18)
+    ax1.yaxis.labelpad = 5
+    ax1.set_xlabel(r"Particle size ($\mu$m)", fontsize=18)
+    fig1.tight_layout()
+    # plt.xlim(0.0, xLim1)
+    plt.ylim(bottom=0.0)
+    plt.savefig('volPercDist.png', bbox_inches='tight', pad_inches=0.1, dpi=220)
+    plt.close(fig1)
 
 if __name__ == "__main__":
 
