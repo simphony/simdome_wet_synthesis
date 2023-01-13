@@ -111,7 +111,7 @@ def main(argv):
             session.run()
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-            sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)
+            sizeDistribution = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
             num = []
             for bins in sizeDistribution.get(oclass=wet_synthesis.Bin):
                 num.append(bins.number)
