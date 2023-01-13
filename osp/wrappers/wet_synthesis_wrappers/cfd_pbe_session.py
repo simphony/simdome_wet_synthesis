@@ -253,7 +253,7 @@ class CfdPbeSession(SimWrapperSession):
 
         if self._engine == "pisoPrecNMC":
             output_path = os.path.join(
-                self._case_dir, 'postProcessing', 'outlet_average', '0',
+                self._case_dir, 'postProcessing', 'outlet_average', '0.000992992',
                 'surfaceFieldValue.dat')
 
             if os.path.isfile(output_path):
