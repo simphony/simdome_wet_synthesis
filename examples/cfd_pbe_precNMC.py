@@ -108,9 +108,7 @@ def main(argv):
             session.run()
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-
-            plot_size_dist(
-                wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
         except Exception as e:
             print(e)

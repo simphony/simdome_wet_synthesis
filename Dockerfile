@@ -58,4 +58,4 @@ RUN pip install matplotlib scipy \
     && pico install ontology.wet_synthesis.yml \
     && python setup.py install --user
 
-CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash" ]
+CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash"]

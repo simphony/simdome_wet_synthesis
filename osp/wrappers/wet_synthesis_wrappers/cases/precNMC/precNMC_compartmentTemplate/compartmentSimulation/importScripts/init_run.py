@@ -216,6 +216,7 @@ def initializer(caseDir):
             feedsDict['metals']['concentration'][i] / cationTotalConc
         aMassCrystal += \
             cationConcRatios[i] * (atomicMass[i] + 2 * (15.999 + 1.00784))
+    aMassCrystal = _MW
 
     equilibria = chemicalEquilibria.ChemicalEquilibria(
         cationConcRatios, nRSolverOpts, activityModel, liquidPropDict)

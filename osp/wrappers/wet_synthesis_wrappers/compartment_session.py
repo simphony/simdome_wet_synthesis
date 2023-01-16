@@ -4,6 +4,7 @@ import shutil
 import math
 import numpy as np
 import yaml
+import stat
 
 from osp.core.session import SimWrapperSession
 from osp.core.namespaces import wet_synthesis
@@ -99,6 +100,8 @@ class CompartmentSession(SimWrapperSession):
             if retcode == 0:
                 print("\nCompartment simulation finished successfully\n")
 
+                self._update_size_dist_cud(root_cuds_object)
+
             else:
                 print("\nCompartment simulation terminated with exit code {:d}\n".format(retcode))
 
@@ -140,6 +143,13 @@ class CompartmentSession(SimWrapperSession):
             os.getcwd(),
             "simulation-wetSynthCompartment-%s" % root_cuds_object.uid)
         shutil.copytree(self._case_template, self._case_dir)
+
+        name_list = ['extract_info.py', 'react_division.py', 'reactDivision', 'runPrecSolver.py']
+        for name in name_list:
+            path = os.path.join(self._case_dir, 'compartmentSimulation', name)
+            os.chmod(path, stat.S_IRWXU)
+            # os.chmod(path, stat.S_IRWXG)
+            # os.chmod(path, stat.S_IRWXO)
 
         input_dir = os.path.join(self._case_dir, 'cfdSimulation/include')
         os.makedirs(input_dir, exist_ok=True)
@@ -206,10 +216,11 @@ class CompartmentSession(SimWrapperSession):
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
+        self._end_time = 20
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
-            self._write_interval = 100
+            self._write_interval = 1
         dataDict.update({'write_interval': self._write_interval})
 
         times = self._estimate_time_intervals()
@@ -220,12 +231,12 @@ class CompartmentSession(SimWrapperSession):
         replace_char_in_keys(dataDict, "_", self._input_format["sep"])
 
         # Write the inputs in the include file
+        self._update_files(dataDict)
+
         self._write_dict(
             dataDict, "input", "cfdSimulation/include", "cfdSimulation/include_original")
 
-        self._update_yaml("/compartmentSimulation/caseSetup.yml", solidParticle, root_cuds_object)
-
-        self._add_division()
+        # self._add_division()
 
         self._initialized = True
 
@@ -241,8 +252,12 @@ class CompartmentSession(SimWrapperSession):
                 4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
             print("Reconstructing the particle size distribution",
                   "with the following DUMMY moments:\n", moments, "\n")
+        moments = [
+            4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
+        print("Reconstructing the particle size distribution",
+                "with the following DUMMY moments:\n", moments, "\n")
 
-        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
+        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments, self._num_moments)
 
         sizeDistribution = root_cuds_object.get(
             oclass=wet_synthesis.SizeDistribution)[0]
@@ -265,13 +280,18 @@ class CompartmentSession(SimWrapperSession):
         moments = list()
 
         if self._engine == "pisoPrecNMC":
+            fluxPath = os.path.join(self._case_dir, 'compartmentSimulation', 'react_zone_flux.txt')
+            fluxes = np.loadtxt(fluxPath, dtype=int, skiprows=2, usecols=(1, 3))
+            for i in range(np.size(fluxes, axis=0)):
+                if fluxes[i, 0] == fluxes[i, 1]:
+                    outComp = fluxes[i, 0]
             output_path = os.path.join(
-                self._case_dir, 'cfdSimulation/postProcessing', 'outlet_average', '0',
-                'surfaceFieldValue.dat')
+                self._case_dir, 'compartmentSimulation', 'timeResults', '0.01',
+                'moments.npy')
 
             if os.path.isfile(output_path):
-                data = np.loadtxt(output_path, skiprows=4, unpack=False)
-                moments = data[-1, 1:self._num_moments + 1].tolist()
+                data = np.load(output_path)
+                moments = data[outComp, :].tolist()
             else:
                 raise Exception()
 
@@ -282,10 +302,12 @@ class CompartmentSession(SimWrapperSession):
 
     def _update_compartment_cuds(self, root_cuds_object):
 
+        filesPath = os.path.join(self._case_dir, 'compartmentSimulation')
+
         zone_id, zone_ave, zone_volume, \
             origin_id, destination_id, flowrate, \
             boundary_name, boundary_destination, boundary_flowrate = \
-            read_compartment_data(self._case_dir)
+            read_compartment_data(filesPath)
 
         compartmentNetwork = root_cuds_object.get(
             oclass=wet_synthesis.CompartmentNetwork)[0]
@@ -433,10 +455,11 @@ class CompartmentSession(SimWrapperSession):
 
         times = np.zeros(14)
 
+        # times[0] = 10
+        # times[1] = 30
+        # times[2] = cfd_time - 0.01
+        # times[3] = cfd_time + self._end_time/3
         times[0] = 10
-        times[1] = 30
-        times[2] = cfd_time - 0.01
-        times[3] = cfd_time + self._end_time/3
 
         return times
 
@@ -465,21 +488,27 @@ class CompartmentSession(SimWrapperSession):
                     print("%s%s %s%s" % (input_format["begin"], key, value,
                                          input_format["end"]), file=f)
 
-    def _update_yaml(self, file_name, solidParticle, root):
-        """Modify yaml file caseSetup.yml for compartment simulation"""
+    def _update_files(self, dict):
+        """Modify files for compartment simulation"""
         
-        _temp = root.get(oclass=wet_synthesis.get("Temperature"))[0]
-        temp = getattr(_temp, 'value')
+        target_dir = os.path.join(self._case_dir, 'compartmentSimulation')
 
-        _density = solidParticle.get(oclass=wet_synthesis.get("Density"))[0]
-        density = getattr(_density, 'value')
+        temp = dict['temperature']
+        density = dict['crystal_density']
+        MW = dict['crystal_MW']
+        KV = dict['shape_factor']
 
         nodes = self._num_moments / 2
 
-        f = open(self._case_dir+file_name, 'r')
+        concs = np.zeros(6)
+        list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
+        for i, l in enumerate(list):
+            inputName = "conc_in_{}".format(l) 
+            concs[i] = dict[inputName]
+
+        f = open(target_dir+'/caseSetup.yml', 'r')
         lines = f.readlines()
         f.close()
-
         for i, line in enumerate(lines):
             if 'T: 0' in line:
                 lines[i] = line.replace('0', str(temp))
@@ -487,9 +516,55 @@ class CompartmentSession(SimWrapperSession):
                 lines[i] = line.replace('0', str(density))
             if 'numOfNodes: 0' in line:
                 lines[i] = line.replace('0', str(nodes))
+            if 'metals:' in line:
+                string = '['+str(concs[0])+', '+str(concs[1])+', '+str(concs[2])+', 0.0, 0.0, '+str(concs[3])+']'
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+            if 'nh3:' in line:
+                string = '[0.0, 0.0, 0.0, '+str(concs[4])+', 0.0, 0.0]'
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+            if 'naoh:' in line:
+                string = '[0.0, 0.0, 0.0, 0.0, '+str(concs[-1])+', 0.0]'
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
 
-        with open(self._case_dir+file_name, 'w') as f:
+        with open(target_dir+'/caseSetup.yml', 'w') as f:
             f.writelines(lines)
+            f.close()
+
+        f = open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'r')
+        lines2 = f.readlines()
+        f.close()
+        for i, line in enumerate(lines2):
+            if 'self.kv = math.pi / 6' in line:
+                lines2[i] = line.replace('math.pi / 6', str(KV))
+        with open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'w') as f:
+            f.writelines(lines2)
+            f.close()
+
+        f = open(target_dir+'/importScripts/init_run.py', 'r')
+        lines3 = f.readlines()
+        f.close()
+        for i, line in enumerate(lines3):
+            if 'aMassCrystal = _MW' in line:
+                lines3[i] = line.replace('_MW', str(MW))
+        with open(target_dir+'/importScripts/init_run.py', 'w') as f:
+            f.writelines(lines3)
+            f.close()
+
+        name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
+
+        for name in name_list:
+            f = open(target_dir+name, 'r')
+            lines = f.readlines()
+            f.close()
+
+            for i, line in enumerate(lines):
+                if "time_dir = '0'" in line:
+                    lines[i] = line.replace("0", str(self._end_time))
+            
+            with open(target_dir+name, 'w') as file:
+                file.writelines(lines)
+        
+ 
         
     def _add_division(self):
         """Copy file for reactor division and update time directory"""

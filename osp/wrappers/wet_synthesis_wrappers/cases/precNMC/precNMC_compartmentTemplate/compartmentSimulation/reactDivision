@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Main script for dividing reactor
+
+python3 react_division.py
+python3 extract_info.py 
