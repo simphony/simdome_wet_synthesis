@@ -229,7 +229,7 @@ class CfdPbeSession(SimWrapperSession):
         print("Reconstructing the particle size distribution",
                 "with the following DUMMY moments:\n", moments, "\n")
 
-        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
+        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments, self._num_moments)
 
         sizeDistribution = root_cuds_object.get(
             oclass=wet_synthesis.SizeDistribution)[0]
