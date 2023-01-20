@@ -14,7 +14,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y \
 
 RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh && \
     /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
-    conda update conda && conda create --name compartment
+    conda update conda && conda create --name wet-synthesis
 
 RUN cd / && mkdir cmake && cd cmake && \
     CMAKE_VERSION=3.20.1 && \
@@ -65,4 +65,4 @@ RUN pip install matplotlib scipy numpy sklearn mpi4py
 RUN pip install .
 RUN pico install ontology.wet_synthesis.yml
 
-CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash" ]
+CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash && source activate wet-synthesis" ]
