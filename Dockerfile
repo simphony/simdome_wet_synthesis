@@ -1,20 +1,12 @@
-FROM ubuntu:20.04
+ARG OSP_CORE_IMAGE=simphony/osp-core:latest
+FROM $OSP_CORE_IMAGE
 LABEL maintainer="mohsen.shiea@polito.it"
 LABEL dockerfile.version="1.1"
 
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Install requirements
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \
-    git graphviz wget build-essential g++ gfortran libgfortran5 openmpi-bin \
-    libopenmpi-dev make libssl-dev libblas-dev liblapack-dev \
-    apt-transport-https software-properties-common openssh-client \
-    bash-completion bash-builtins libnss-wrapper vim nano tree curl unzip \
-    python3-pip
-
-RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh && \
-    /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
-    conda update conda && conda create --name compartment
+    git graphviz wget build-essential g++ gfortran libgfortran5 openmpi-bin libopenmpi-dev make libssl-dev libblas-dev liblapack-dev \
+    apt-transport-https software-properties-common openssh-client bash-completion bash-builtins libnss-wrapper vim nano tree curl unzip
 
 RUN cd / && mkdir cmake && cd cmake && \
     CMAKE_VERSION=3.20.1 && \
@@ -37,9 +29,10 @@ RUN cd / && mkdir sundials && cd sundials && \
     make install && \
     cd .. && rm -r builddir cvode-${CVODE_VERSION} cvode-${CVODE_VERSION}.tar.gz
 
-RUN wget -O - http://dl.openfoam.org/gpg.key | apt-key add - && add-apt-repository http://dl.openfoam.org/ubuntu && \
+RUN cd /usr/bin && rm python3 && ln -s python3.6 python3 && \
+    wget -O - http://dl.openfoam.org/gpg.key | apt-key add - && add-apt-repository http://dl.openfoam.org/ubuntu && \
     apt-get update && apt-get install -y --no-install-recommends openfoam8 && \
-    rm -rf /var/lib/apt/lists/*
+    cd /usr/bin && rm python3 && ln -s python3.7 python3 && rm -rf /var/lib/apt/lists/*
 
 ENV user=simdomeuser HOME=/home/simdomeuser
 
@@ -59,10 +52,10 @@ RUN mkdir -p $HOME/simdome/wrappers/simdome_wet_synthesis && \
 COPY --chown=$user . $HOME/simdome/wrappers/simdome_wet_synthesis
 WORKDIR $HOME/simdome/wrappers/simdome_wet_synthesis
 
-ENV PATH=$HOME/.local/bin:$PATH
+ENV PATH=$PATH:$HOME/.local/bin
 
-RUN pip install matplotlib scipy numpy sklearn mpi4py
-RUN pip install .
-RUN pico install ontology.wet_synthesis.yml
+RUN pip install matplotlib scipy \
+    && pico install ontology.wet_synthesis.yml \
+    && python setup.py install --user
 
 CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash" ]

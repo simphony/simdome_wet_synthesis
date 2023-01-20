@@ -14,19 +14,17 @@ setup(
     description='A collection of wrappers for wet-phase synthesis of Ni-Mn-Co hydroxide',
     keywords='SimDOME, CUDS, Precipitation, NMC hydroxide',
     long_description=README_TEXT,
-    install_requires=[
-        'osp-core>=' + OSP_CORE_MIN + ', <' + OSP_CORE_MAX,
-    ],
     packages=find_packages(exclude=("examples", "tests")),
     install_requires=[
+        'osp-core>=' + OSP_CORE_MIN + ', <' + OSP_CORE_MAX,
         "graphviz",
         "numpy",
         "PyYaml",
         "scipy",
         "sklearn",
         "mpi4py",
-        "matplotlib",
-        "mkl-services"
+        "matplotlib"
+        # "mkl-services"
     ],
     python_requires=">=3.7",
     include_package_data=True,
