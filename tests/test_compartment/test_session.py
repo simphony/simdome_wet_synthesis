@@ -32,7 +32,7 @@ class TestWrapper(unittest.TestCase):
                 delete_simulation_files=True) as session:
             try:
                 self.assertIsInstance(str(session), str)
-                self.assertIn('nanodome', str(session).lower())
+                self.assertIn('compartmental', str(session).lower())
             finally:
                 session.close()
 
@@ -80,6 +80,9 @@ class TestWrapper(unittest.TestCase):
                 delete_simulation_files=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
 
+            session._dummy = True
+
+            pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
             # Run the session
@@ -90,10 +93,10 @@ class TestWrapper(unittest.TestCase):
             self.assertTrue(session._initialized)
 
             # Get the results
-            pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
+            pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
-            # plot_size_dist(
-            #     wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
         self.assertFalse(os.path.isdir(simulation_dir))
 

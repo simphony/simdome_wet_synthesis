@@ -162,7 +162,7 @@ class TestCfdPbeSession(unittest.TestCase):
             end_time = session._estimate_end_time(feeds, reactor_volume)
 
             self.assertIsInstance(end_time, int)
-            self.assertEqual(18160, end_time)
+            self.assertEqual(18060, end_time)
 
     def test_estimate_time_intervals(self):
         """Test the _estimate_time_intervals method"""

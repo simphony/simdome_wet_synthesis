@@ -215,8 +215,9 @@ class CompartmentSession(SimWrapperSession):
 
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
-                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
-        self._end_time = 20
+                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639) + 60
+        if self._dummy:
+            self._end_time = 20
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
@@ -252,10 +253,6 @@ class CompartmentSession(SimWrapperSession):
                 4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
             print("Reconstructing the particle size distribution",
                   "with the following DUMMY moments:\n", moments, "\n")
-        moments = [
-            4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
-        print("Reconstructing the particle size distribution",
-                "with the following DUMMY moments:\n", moments, "\n")
 
         vol_percents, bin_sizes = reconstruct_log_norm_dist(moments, self._num_moments)
 
@@ -285,9 +282,14 @@ class CompartmentSession(SimWrapperSession):
             for i in range(np.size(fluxes, axis=0)):
                 if fluxes[i, 0] == fluxes[i, 1]:
                     outComp = fluxes[i, 0]
-            output_path = os.path.join(
-                self._case_dir, 'compartmentSimulation', 'timeResults', '0.01',
-                'moments.npy')
+            if self._dummy:
+                output_path = os.path.join(
+                    self._case_dir, 'compartmentSimulation', 'timeResults', '0.01',
+                    'moments.npy')
+            else:
+                output_path = os.path.join(
+                    self._case_dir, 'compartmentSimulation', 'timeResults', '216000',
+                    'moments.npy')
 
             if os.path.isfile(output_path):
                 data = np.load(output_path)
@@ -429,7 +431,7 @@ class CompartmentSession(SimWrapperSession):
 
         residence_time = self._residence_time(feeds, reactor_volume)
 
-        end_time = 5*residence_time + 60
+        end_time = 5*residence_time
 
         # round the estimated end time
         if end_time > 1.0:
@@ -455,11 +457,14 @@ class CompartmentSession(SimWrapperSession):
 
         times = np.zeros(14)
 
-        # times[0] = 10
-        # times[1] = 30
-        # times[2] = cfd_time - 0.01
-        # times[3] = cfd_time + self._end_time/3
-        times[0] = 10
+        if self._dummy:
+            times[0] = 10
+        else:
+            times[0] = 10
+            times[1] = 30
+            times[2] = cfd_time - 0.01
+            times[3] = cfd_time + (self._end_time-60)/3
+
 
         return times
 
@@ -592,8 +597,12 @@ class CompartmentSession(SimWrapperSession):
 
     def engine_specialization(self, engine):
         if engine == "pisoPrecNMC":
-            self._case_template = os.path.join(
-                self._case_source, "precNMC_compartmentTemplate")
+            if self._dummy:
+                self._case_template = os.path.join(
+                    self._case_source, "precNMC_compartmentTemplate_dummy")
+            else:
+                self._case_template = os.path.join(
+                    self._case_source, "precNMC_compartmentTemplate")
 
             self._exec = ["./Allrun", str(self._num_proc)]
 

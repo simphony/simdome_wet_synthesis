@@ -33,6 +33,7 @@ class TestWrapper(unittest.TestCase):
                 delete_simulation_files=True) as session:
 
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            session._dummy = True
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 

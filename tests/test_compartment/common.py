@@ -81,6 +81,8 @@ def generate_cuds() -> Cuds:
 
         Cuds2dot(wrapper).render()
 
+        sizeDistribution = wet_synthesis.SizeDistribution()
+        wrapper.add(sizeDistribution)
         compartmentNetwork = wet_synthesis.CompartmentNetwork()
         wrapper.add(compartmentNetwork)
 

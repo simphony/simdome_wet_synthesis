@@ -34,17 +34,23 @@ class TestWrapper(unittest.TestCase):
 
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
+            session._dummy = True
+
+            pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
             # Run the session
             session.run()
+
+            simulation_dir = session._case_dir
+
             self.assertTrue(session._initialized)
 
             # Get the results
-            pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
+            pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
-            # plot_size_dist(
-            #     wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
 
 if __name__ == '__main__':

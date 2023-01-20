@@ -187,12 +187,16 @@ class CfdPbeSession(SimWrapperSession):
 
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
-                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
-        self._end_time = 0.0011
+                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639) + 60
+        if self._dummy:
+            self._end_time = 0.0011
         dataDict.update({'end_time': self._end_time})
 
         if self._write_interval is None:
-            self._write_interval = 1
+            if self._dummy:
+                self._write_interval = 1
+            else:
+                self._write_interval = 100
         dataDict.update({'write_interval': self._write_interval})
 
         times = self._estimate_time_intervals()
@@ -224,12 +228,8 @@ class CfdPbeSession(SimWrapperSession):
                 4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
             print("Reconstructing the particle size distribution",
                   "with the following DUMMY moments:\n", moments, "\n")
-        moments = [
-            4.77253617e+13, 1.08819180e+08, 2.99624644e+02, 9.09160310e-04]
-        print("Reconstructing the particle size distribution",
-                "with the following DUMMY moments:\n", moments, "\n")
 
-        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments)
+        vol_percents, bin_sizes = reconstruct_log_norm_dist(moments, self._num_moments)
 
         sizeDistribution = root_cuds_object.get(
             oclass=wet_synthesis.SizeDistribution)[0]
@@ -252,9 +252,14 @@ class CfdPbeSession(SimWrapperSession):
         moments = list()
 
         if self._engine == "pisoPrecNMC":
-            output_path = os.path.join(
-                self._case_dir, 'postProcessing', 'outlet_average', '0.000992992',
-                'surfaceFieldValue.dat')
+            if self._dummy:
+                output_path = os.path.join(
+                    self._case_dir, 'postProcessing', 'outlet_average', '0.000992992',
+                    'surfaceFieldValue.dat')
+            else:
+                output_path = os.path.join(
+                    self._case_dir, 'postProcessing', 'outlet_average', '60',
+                    'surfaceFieldValue.dat')
 
             if os.path.isfile(output_path):
                 data = np.loadtxt(output_path, skiprows=4, unpack=False)
@@ -350,7 +355,7 @@ class CfdPbeSession(SimWrapperSession):
 
         residence_time = self._residence_time(feeds, reactor_volume)
 
-        end_time = 5*residence_time + 60
+        end_time = 5*residence_time
 
         # round the estimated end time
         if end_time > 1.0:
@@ -376,21 +381,23 @@ class CfdPbeSession(SimWrapperSession):
 
         times = np.zeros(14)
 
-        # times[0] = 10
-        # times[1] = 30
-        # times[2] = cfd_time - 0.01
-        # times[3] = cfd_time + 0.009981
-        # times[4] = cfd_time + 0.05991
-        # times[5] = cfd_time + 0.19981
-        # times[6] = cfd_time + 0.9991
-        # times[7] = cfd_time + 2.9981
-        # times[8] = cfd_time + 12.991
-        # times[9] = cfd_time + 34.981
-        # times[10] = cfd_time + 84.961
-        # times[11] = cfd_time + 249.921
-        # times[12] = cfd_time + 549.881
-        # times[13] = cfd_time + 999.841
-        times[0] = 0.001
+        if self._dummy:
+            times[0] = 0.001
+        else:
+            times[0] = 10
+            times[1] = 30
+            times[2] = cfd_time - 0.01
+            times[3] = cfd_time + 0.009981
+            times[4] = cfd_time + 0.05991
+            times[5] = cfd_time + 0.19981
+            times[6] = cfd_time + 0.9991
+            times[7] = cfd_time + 2.9981
+            times[8] = cfd_time + 12.991
+            times[9] = cfd_time + 34.981
+            times[10] = cfd_time + 84.961
+            times[11] = cfd_time + 249.921
+            times[12] = cfd_time + 549.881
+            times[13] = cfd_time + 999.841
 
         return times
 
@@ -457,8 +464,12 @@ class CfdPbeSession(SimWrapperSession):
 
     def engine_specialization(self, engine):
         if engine == "pisoPrecNMC":
-            self._case_template = os.path.join(
-                self._case_source, "precNMC_foamTemplate")
+            if self._dummy:
+                self._case_template = os.path.join(
+                    self._case_source, "precNMC_foamTemplate_dummy")
+            else:
+                self._case_template = os.path.join(
+                    self._case_source, "precNMC_foamTemplate")
 
             self._exec = ["./Allrun", str(self._num_proc)]
 

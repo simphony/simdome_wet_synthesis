@@ -32,7 +32,7 @@ class TestWrapper(unittest.TestCase):
                 delete_simulation_files=True) as session:
             try:
                 self.assertIsInstance(str(session), str)
-                self.assertIn('nanodome', str(session).lower())
+                self.assertIn('CFD-PBE', str(session).lower())
             finally:
                 session.close()
 
@@ -79,6 +79,8 @@ class TestWrapper(unittest.TestCase):
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
+
+            session._dummy = True
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 

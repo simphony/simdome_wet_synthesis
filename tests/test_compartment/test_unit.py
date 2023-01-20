@@ -32,36 +32,36 @@ class TestCompartmentSession(unittest.TestCase):
         """
         self.template_wrapper = generate_cuds()
 
-    # def test_extract_moments(self):
-    #     """Test the _extract_moments method"""
-    #     with CompartmentSession(
-    #             engine="pisoPrecNMC", case="precNMC",
-    #             delete_simulation_files=True) as session:
+    def test_extract_moments(self):
+        """Test the _extract_moments method"""
+        with CompartmentSession(
+                engine="pisoPrecNMC", case="precNMC",
+                delete_simulation_files=True) as session:
             
-    #         wet_synthesis.WetSynthesisWrapper(session=session)
+            wet_synthesis.WetSynthesisWrapper(session=session)
 
-    #         session._case_dir = os.path.join(currentDir, 'data')
+            session._case_dir = os.path.join(currentDir, 'data')
 
-    #         res = session._extract_moments()
+            res = session._extract_moments()
 
-    #         self.assertIsInstance(res, list)
+            self.assertIsInstance(res, list)
 
-    # def test_update_size_dist_cud(self):
-    #     """Test the _update_size_dist_cud method"""
-    #     with CompartmentSession(
-    #             engine="pisoPrecNMC", case="precNMC",
-    #             delete_simulation_files=True) as session:
+    def test_update_size_dist_cud(self):
+        """Test the _update_size_dist_cud method"""
+        with CompartmentSession(
+                engine="pisoPrecNMC", case="precNMC",
+                delete_simulation_files=True) as session:
             
-    #         wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
-    #         session._case_dir = os.path.join(currentDir, 'data')
+            session._case_dir = os.path.join(currentDir, 'data')
 
-    #         session._update_size_dist_cud()
+            session._update_size_dist_cud()
 
-    #         pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
-    #         plot_size_dist(
-    #             wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(
+                wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
     def test_update_compartment_cuds(self):
         """Test the _select_mesh method"""
@@ -175,7 +175,7 @@ class TestCompartmentSession(unittest.TestCase):
             end_time = session._estimate_end_time(feeds, reactor_volume)
 
             self.assertIsInstance(end_time, int)
-            self.assertEqual(18160, end_time)
+            self.assertEqual(18060, end_time)
 
     def test_estimate_time_intervals(self):
         """Test the _estimate_time_intervals method"""
@@ -190,7 +190,7 @@ class TestCompartmentSession(unittest.TestCase):
 
             self.assertIsInstance(times, object)
             self.assertEqual(14, np.size(times))
-            self.assertEqual(6000, int(times[3]))
+            self.assertEqual(6060, int(times[3]))
 
     def test_write_dict(self):
         """Test the _write_dict method"""
