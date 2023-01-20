@@ -17,7 +17,18 @@ setup(
     install_requires=[
         'osp-core>=' + OSP_CORE_MIN + ', <' + OSP_CORE_MAX,
     ],
-    packages=find_packages(exclude=("examples")),
+    packages=find_packages(exclude=("examples", "tests")),
+    install_requires=[
+        "graphviz",
+        "numpy",
+        "PyYaml",
+        "scipy",
+        "sklearn",
+        "mpi4py",
+        "matplotlib",
+        "mkl-services"
+    ],
+    python_requires=">=3.7",
     include_package_data=True,
     # entry_points={
     #     'wrappers':
