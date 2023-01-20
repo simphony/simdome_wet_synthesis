@@ -54,7 +54,7 @@ WORKDIR $HOME/simdome/wrappers/simdome_wet_synthesis
 
 ENV PATH=$PATH:$HOME/.local/bin
 
-RUN pip install matplotlib scipy \
+RUN pip install matplotlib scipy mpi4py\
     && pico install ontology.wet_synthesis.yml \
     && python setup.py install --user
 
