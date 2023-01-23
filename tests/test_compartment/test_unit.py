@@ -154,8 +154,9 @@ class TestCompartmentSession(unittest.TestCase):
             dataDict = dict()
 
             feed = wrapper.get(oclass=wet_synthesis.Feed)[2]
+            component = feed.get(oclass=wet_synthesis.Component)[4]
             name = 'flowrate_' + feed.name
-            conc = 'conc_in_' + feed.get(oclass=wet_synthesis.Component.name)
+            conc = 'conc_in_' + component.name
             
             session._insert_feed(feed, dataDict)
 
