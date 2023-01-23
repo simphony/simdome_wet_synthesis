@@ -38,7 +38,6 @@ class TestWrapper(unittest.TestCase):
         nh3 = cuds['nh3']
         naoh = cuds['naoh']
         sizeDist = cuds['sizeDistribution']
-        compartmentNet = cuds['compartmentNetwork']
 
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
@@ -47,7 +46,7 @@ class TestWrapper(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
 
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist, compartmentNet)
+            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
