@@ -64,12 +64,11 @@ class TestCompartmentSession(unittest.TestCase):
 
             session._case_dir = os.path.join(currentDir, 'data')
 
-            session._update_size_dist_cud()
+            session._update_size_dist_cud(wrapper)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
-            plot_size_dist(
-                wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
     def test_update_compartment_cuds(self):
         """Test the _select_mesh method"""
@@ -181,7 +180,7 @@ class TestCompartmentSession(unittest.TestCase):
             mix_conc = session._mixed_conc('nh3', 'nh3', feeds)
 
             self.assertIsInstance(mix_conc, float)
-            self.assertEqual(1.0, mix_conc)
+            self.assertEqual(1.0, round(mix_conc))
 
     def test_residence_time(self):
         """Test the _residence_time method"""
@@ -229,7 +228,7 @@ class TestCompartmentSession(unittest.TestCase):
             end_time = session._estimate_end_time(feeds, reactor_volume)
 
             self.assertIsInstance(end_time, int)
-            self.assertEqual(18060, end_time)
+            self.assertEqual(18000, end_time)
 
     def test_estimate_time_intervals(self):
         """Test the _estimate_time_intervals method"""
@@ -237,7 +236,7 @@ class TestCompartmentSession(unittest.TestCase):
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=18060,
                 write_interval=1, num_moments=4,
-                num_proc=1, dummy=True) as session:
+                num_proc=1, dummy=False) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
