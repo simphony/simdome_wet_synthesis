@@ -102,7 +102,7 @@ def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
     # pretty_print(wrapper.get(oclass=wet_synthesis.RotationalSpeed)[0])
     cuds['solidParticle'] = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
     # pretty_print(wrapper.get(oclass=wet_synthesis.SolidParticle)[0])
-    cuds['feeds'] = wrapper.get(oclass=wet_synthesis.Feed)[0]
+    cuds['feeds'] = wrapper.get(oclass=wet_synthesis.Feed)
     # pretty_print(wrapper.get(oclass=wet_synthesis.Feed)[0])
     cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
     # pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
