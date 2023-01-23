@@ -45,6 +45,7 @@ def main(argv):
         fieldName = 'epsilon'
         field_path = os.path.join(OF_data_path, time_dir, fieldName)
         epsilon, _ = read_field(field_path, read_boundary=False)
+        print(epsilon, _)
 
         mesh_path = os.path.join(OF_data_path, 'constant', 'polyMesh')
 

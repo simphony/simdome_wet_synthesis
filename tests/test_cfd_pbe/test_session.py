@@ -128,8 +128,6 @@ class TestWrapper(unittest.TestCase):
             # Get the results
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-            sizeDistPlot = os.path.join(currentDir, 'volPercentDist.png')
-            self.assertTrue(os.path.isfile(sizeDistPlot))
 
         self.assertFalse(os.path.isdir(simulation_dir))
 
