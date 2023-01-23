@@ -22,7 +22,7 @@ setup(
         "PyYaml",
         "scipy",
         "sklearn",
-        "mpi4py",
+        # "mpi4py",
         "matplotlib"
         # "mkl-services"
     ],
