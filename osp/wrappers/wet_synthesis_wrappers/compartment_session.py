@@ -406,6 +406,7 @@ class CompartmentSession(SimWrapperSession):
                 'MolarConcentration', component, inputName, dataDict)
 
     def _mixed_conc(self, component_name, feed_name, feeds):
+        print(feeds)
 
         total_flowrate = 0.0
         flowrate = None
