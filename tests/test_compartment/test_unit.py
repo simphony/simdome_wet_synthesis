@@ -292,21 +292,67 @@ class TestCompartmentSession(unittest.TestCase):
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
             session._case_dir = os.path.join(currentDir, 'data')
-            dataDict = dict({'temperature': 298.15})
+            dataDict = dict({'temperature': 298.15},
+                            {'crystal_density': 3953},
+                            {'crystal_MW': 92.338},
+                            {'shape_factor': 0.523599},
+                            {'conc_in_nickel': 1.6},
+                            {'conc_in_manganese': 0.2},
+                            {'conc_in_cobalt': 0.2},
+                            {'conc_in_so4': 2.0},
+                            {'conc_in_nh3': 10.0},
+                            {'conc_in_na': 5.0})
+
+
+            input_dir = os.path.join(currentDir, 'data', 'compartmentSimulation')
+            shutil.copy(input_dir+'/caseSetup.yml', input_dir+'/caseSetup_bkp.yml')
+            shutil.copy(input_dir+'/extract_info.py', input_dir+'/extract_info_bkp.py')
+            shutil.copy(input_dir+'/react_division.py', input_dir+'/react_division_bkp.py')
+            shutil.copy(input_dir+'/importScripts/NiMnCoHydroxidePrec.py', input_dir+'/importScripts/NiMnCoHydroxidePrec_bkp.py')
+            shutil.copy(input_dir+'/importScripts/init_run.py', input_dir+'/importScripts/init_run_bkp.py')
+            shutil.copy(input_dir+'/importScripts/read_files.py', input_dir+'/importScripts/read_files_bkp.py')
 
             session._update_files(dataDict)
 
-            input_dir = os.path.join(currentDir, 'data', 'compartmentSimulation')
             res_path = os.path.join(input_dir, "caseSetup.yml")
             f = open(res_path, 'r')
             lines = f.readlines()
             f.close()
+            self.assertIn('T: 298.15', lines)
+            self.assertIn('density: 3953', lines)
+            self.assertIn('numOfNodes: 4', lines)
+            self.assertIn('[1.2, 0.2, 0.2, 0.0, 0.0, 2.0]', lines)
+            self.assertIn('[0.0, 0.0, 0.0, 5.0, 0.0, 0.0]', lines)
+            self.assertIn('[0.0, 0.0, 0.0, 0.0, 10.0, 0.0]', lines)
+            shutil.rmtree(res_path)
+            os.rename(input_dir+'/caseSetup_bkp.yml', input_dir+'/caseSetup.yml')
 
-            for line in lines:
-                if (line.find("T:")>(-1)):
-                    l = line
-            
-            self.assertIn('T: 298.15', l)
+            res_path = os.path.join(input_dir, 'importScripts', 'NiMnCoHydroxidePrec.py')
+            f = open(res_path, 'r')
+            lines = f.readlines()
+            f.close()
+            self.assertIn('self.kv = 0.523599', lines)
+            shutil.rmtree(res_path)
+            os.rename(input_dir+'/NiMnCoHydroxidePrec_bkp.py', input_dir+'/NiMnCoHydroxidePrec.py')
+
+            res_path = os.path.join(input_dir, 'importScripts', 'init_run.py')
+            f = open(res_path, 'r')
+            lines = f.readlines()
+            f.close()
+            self.assertIn('aMassCrystall = 3953', lines)
+            shutil.rmtree(res_path)
+            os.rename(input_dir+'/init_run_bkp.py', input_dir+'/init_run.py')
+
+            name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
+            for name in name_list:
+                f = open(input_dir+name, 'r')
+                lines = f.readlines()
+                f.close()
+                self.assertIn("time_dir = '0.0011'", lines)
+                shutil.rmtree(input_dir+name)
+            os.rename(input_dir+'/extract_info_bkp.py', input_dir+'/extract_info.py')
+            os.rename(input_dir+'/react_division_bkp.py', input_dir+'/react_division.py')
+            os.rename(input_dir+'/importScripts/read_files_bkp.py', input_dir+'/importScripts/read_files.py')
 
     def test_engine_specialization(self):
         """Test the _write_dict method"""

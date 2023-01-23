@@ -491,90 +491,76 @@ class CompartmentSession(SimWrapperSession):
         
         target_dir = os.path.join(self._case_dir, 'compartmentSimulation')
 
-        if self._dummy:
-            temp = dict['temperature']
+        temp = dict['temperature']
+        density = dict['crystal_density']
+        MW = dict['crystal_MW']
+        KV = dict['shape_factor']
 
-            f = open(target_dir+'/caseSetup.yml', 'r')
+        nodes = self._num_moments / 2
+
+        concs = np.zeros(6)
+        list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
+        for i, l in enumerate(list):
+            inputName = "conc_in_{}".format(l) 
+            concs[i] = dict[inputName]
+
+        f = open(target_dir+'/caseSetup.yml', 'r')
+        lines = f.readlines()
+        f.close()
+        for i, line in enumerate(lines):
+            if 'T: 0' in line:
+                lines[i] = line.replace('0', str(temp))
+            if 'density: 0' in line:
+                lines[i] = line.replace('0', str(density))
+            if 'numOfNodes: 0' in line:
+                lines[i] = line.replace('0', str(nodes))
+            if 'metals:' in line:
+                string = '['+str(concs[0])+', '+str(concs[1])+', '+str(concs[2])+', 0.0, 0.0, '+str(concs[3])+']'
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+            if 'nh3:' in line:
+                string = '[0.0, 0.0, 0.0, '+str(concs[4])+', 0.0, 0.0]'
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+            if 'naoh:' in line:
+                string = '[0.0, 0.0, 0.0, 0.0, '+str(concs[-1])+', 0.0]'
+                lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
+
+        with open(target_dir+'/caseSetup.yml', 'w') as f:
+            f.writelines(lines)
+            f.close()
+
+        f = open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'r')
+        lines2 = f.readlines()
+        f.close()
+        for i, line in enumerate(lines2):
+            if 'self.kv = math.pi / 6' in line:
+                lines2[i] = line.replace('math.pi / 6', str(KV))
+        with open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'w') as f:
+            f.writelines(lines2)
+            f.close()
+
+        f = open(target_dir+'/importScripts/init_run.py', 'r')
+        lines3 = f.readlines()
+        f.close()
+        for i, line in enumerate(lines3):
+            if 'aMassCrystal = _MW' in line:
+                lines3[i] = line.replace('_MW', str(MW))
+        with open(target_dir+'/importScripts/init_run.py', 'w') as f:
+            f.writelines(lines3)
+            f.close()
+
+        name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
+
+        for name in name_list:
+            f = open(target_dir+name, 'r')
             lines = f.readlines()
             f.close()
+
             for i, line in enumerate(lines):
-                if 'T: 0' in line:
-                    lines[i] = line.replace('0', str(temp))
-            with open(target_dir+'/caseSetup.yml', 'w') as f:
-                f.writelines(lines)
-                f.close()
-
-        else:
-            temp = dict['temperature']
-            density = dict['crystal_density']
-            MW = dict['crystal_MW']
-            KV = dict['shape_factor']
-
-            nodes = self._num_moments / 2
-
-            concs = np.zeros(6)
-            list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
-            for i, l in enumerate(list):
-                inputName = "conc_in_{}".format(l) 
-                concs[i] = dict[inputName]
-
-            f = open(target_dir+'/caseSetup.yml', 'r')
-            lines = f.readlines()
-            f.close()
-            for i, line in enumerate(lines):
-                if 'T: 0' in line:
-                    lines[i] = line.replace('0', str(temp))
-                if 'density: 0' in line:
-                    lines[i] = line.replace('0', str(density))
-                if 'numOfNodes: 0' in line:
-                    lines[i] = line.replace('0', str(nodes))
-                if 'metals:' in line:
-                    string = '['+str(concs[0])+', '+str(concs[1])+', '+str(concs[2])+', 0.0, 0.0, '+str(concs[3])+']'
-                    lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
-                if 'nh3:' in line:
-                    string = '[0.0, 0.0, 0.0, '+str(concs[4])+', 0.0, 0.0]'
-                    lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
-                if 'naoh:' in line:
-                    string = '[0.0, 0.0, 0.0, 0.0, '+str(concs[-1])+', 0.0]'
-                    lines[i+1] = lines[i+1].replace('[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]', string)
-
-            with open(target_dir+'/caseSetup.yml', 'w') as f:
-                f.writelines(lines)
-                f.close()
-
-            f = open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'r')
-            lines2 = f.readlines()
-            f.close()
-            for i, line in enumerate(lines2):
-                if 'self.kv = math.pi / 6' in line:
-                    lines2[i] = line.replace('math.pi / 6', str(KV))
-            with open(target_dir+'/importScripts/NiMnCoHydroxidePrec.py', 'w') as f:
-                f.writelines(lines2)
-                f.close()
-
-            f = open(target_dir+'/importScripts/init_run.py', 'r')
-            lines3 = f.readlines()
-            f.close()
-            for i, line in enumerate(lines3):
-                if 'aMassCrystal = _MW' in line:
-                    lines3[i] = line.replace('_MW', str(MW))
-            with open(target_dir+'/importScripts/init_run.py', 'w') as f:
-                f.writelines(lines3)
-                f.close()
-
-            name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
-
-            for name in name_list:
-                f = open(target_dir+name, 'r')
-                lines = f.readlines()
-                f.close()
-
-                for i, line in enumerate(lines):
-                    if "time_dir = '0'" in line:
-                        lines[i] = line.replace("0", str(self._end_time))
-                
-                with open(target_dir+name, 'w') as file:
-                    file.writelines(lines)
+                if "time_dir = '0'" in line:
+                    lines[i] = line.replace("0", str(self._end_time))
+            
+            with open(target_dir+name, 'w') as file:
+                file.writelines(lines)
         
  
         
