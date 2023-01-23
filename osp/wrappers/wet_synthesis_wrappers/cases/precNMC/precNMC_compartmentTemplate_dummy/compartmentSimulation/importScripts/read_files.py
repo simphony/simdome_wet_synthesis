@@ -27,20 +27,16 @@ def read_field(filePath, read_boundary=True, num_headerLines=16):
         data_format = find_format(headerLines)
 
         if has_boundary(headerLines):
-            print('Hello, has_boundary\n')
 
             lines_boundary = split_bField(lines)
 
             if read_boundary:
-                print('Hello, read_boundary\n')
                 return read_field_internal(lines, data_format), \
                     read_field_boundary(lines_boundary, data_format)
             else:
-                print('Hello, no_read_boundary\n')
                 return read_field_internal(lines, data_format), {}
 
         else:
-            print('Hello, not_has_boundary')
             return read_field_internal(lines, data_format), {}
 
     except Exception as e:
@@ -54,16 +50,22 @@ def read_field_internal(lines, data_format):
     for row, line in enumerate(lines):
         if (b'internalField' in line) or (b'value' in line):
             break
+    print('Hello\n')
     
     internal_field = None
 
     if b'nonuniform' in line:
+        print('Hello, nonuniform \n')
         field_size = int(re.sub(b'\W', b'', lines[row + 1]))
+        print(field_size)
 
         if data_format is Format.ASCII:
+            print('Hello, ascii \n')
             offset = row + 3
+            print(lines[offset])
             internal_field = np.array(
                 lines[offset : offset + field_size], dtype=float)
+            print(internal_field)
 
         else:
             offset = row + 2
