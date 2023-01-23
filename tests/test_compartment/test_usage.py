@@ -54,9 +54,6 @@ class TestWrapper(unittest.TestCase):
 
             # Run the session
             session.run()
-
-            simulation_dir = session._case_dir
-
             self.assertTrue(session._initialized)
 
             # Get the results

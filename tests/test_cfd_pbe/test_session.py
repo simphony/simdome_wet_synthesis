@@ -3,7 +3,7 @@
 import unittest, os
 from uuid import UUID
 
-from common import generate_cuds
+from common import generate_cuds, get_cuds
 from osp.core.cuds import Cuds
 from osp.core.namespaces import wet_synthesis
 
@@ -29,7 +29,9 @@ class TestWrapper(unittest.TestCase):
         """Tests the `__str__` method of the session."""
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             try:
                 self.assertIsInstance(str(session), str)
                 self.assertIn('CFD-PBE', str(session).lower())
@@ -40,7 +42,9 @@ class TestWrapper(unittest.TestCase):
         """Tests the `_load_from_backend` method of the session."""
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -58,13 +62,29 @@ class TestWrapper(unittest.TestCase):
 
     def test_apply_addedd(self):
         """Tests the `_apply_added` method of the session."""
+
+        cuds = get_cuds(self.template_wrapper)
+        accuracy = cuds['accuracy_level']
+        press = cuds['pressure']
+        temp = cuds['temperature']
+        rotation = cuds['rotationalSpeed']
+        solid = cuds['solidParticle']
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+        sizeDist = cuds['sizeDistribution']
+        compartmentNet = cuds['compartmentNetwork']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
-            wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist, compartmentNet)
 
-            session._apply_added()
+            session._apply_added(wrapper, 0)
 
             self.assertTrue(session._initialized)
 
@@ -74,13 +94,25 @@ class TestWrapper(unittest.TestCase):
         Running the simulation for the first time involves calling the
         `_initialize` method, the `_run` method and then the 'close' method.
         """
+        cuds = get_cuds(self.template_wrapper)
+        accuracy = cuds['accuracy_level']
+        press = cuds['pressure']
+        temp = cuds['temperature']
+        rotation = cuds['rotationalSpeed']
+        solid = cuds['solidParticle']
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+        sizeDist = cuds['sizeDistribution']
+        compartmentNet = cuds['compartmentNetwork']
 
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
-
-            session._dummy = True
+            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist, compartmentNet)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
@@ -93,9 +125,7 @@ class TestWrapper(unittest.TestCase):
 
             # Get the results
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
-
-            plot_size_dist(
-                wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
         self.assertFalse(os.path.isdir(simulation_dir))
 

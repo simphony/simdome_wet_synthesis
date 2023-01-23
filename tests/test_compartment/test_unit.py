@@ -318,6 +318,9 @@ class TestCompartmentSession(unittest.TestCase):
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
+            engine="pisoPrecNMC"
+            session.engine_specialization(engine)
+
             self.assertEqual(1.0/3.6e6, session._conversionFactors["FlowRate"])
 
             

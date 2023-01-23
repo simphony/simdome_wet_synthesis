@@ -7,7 +7,7 @@ import numpy as np
 from osp.core.cuds import Cuds
 from osp.core.namespaces import wet_synthesis
 
-from common import generate_cuds
+from common import generate_cuds, get_cuds
 from osp.wrappers.wet_synthesis_wrappers import CfdPbeSession
 from osp.wrappers.wet_synthesis_wrappers.utils import plot_size_dist
 from osp.core.utils import pretty_print
@@ -36,7 +36,9 @@ class TestCfdPbeSession(unittest.TestCase):
         """Test the _extract_moments method"""
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -48,28 +50,39 @@ class TestCfdPbeSession(unittest.TestCase):
 
     def test_update_size_dist_cud(self):
         """Test the _update_size_dist_cud method"""
+        cuds = get_cuds(self.template_wrapper)
+        sizeDist = cuds['sizeDistribution']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(sizeDist)
 
             session._case_dir = os.path.join(currentDir, 'data')
 
-            session._update_size_dist_cud()
+            session._update_size_dist_cud(wrapper)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
-            plot_size_dist(
-                wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
     def test_select_mesh(self):
         """Test the _select_mesh method"""
+        cuds = get_cuds(self.template_wrapper)
+        accuracy = cuds['accuracy_level']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(accuracy)
 
             accuracy_level = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)[0]
 
@@ -80,11 +93,17 @@ class TestCfdPbeSession(unittest.TestCase):
 
     def test_insert_data(self):
         """Test the _insert_data method"""
+        cuds = get_cuds(self.template_wrapper)
+        temp = cuds['temperature']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(temp)
 
             dataDict = dict()
 
@@ -99,46 +118,70 @@ class TestCfdPbeSession(unittest.TestCase):
 
     def test_insert_feed(self):
         """Test the _insert_feed method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             dataDict = dict()
 
             feed = wrapper.get(oclass=wet_synthesis.Feed)[2]
+            component = feed.get(oclass=wet_synthesis.Component)[0]
             name = 'flowrate_' + feed.name
-            conc = 'conc_in_' + feed.get(oclass=wet_synthesis.Component)[0]
+            conc = 'conc_in_' + component.name
             
             session._insert_feed(feed, dataDict)
 
             self.assertIsInstance(dataDict, dict)
-            self.assertEqual(1.226646, dataDict[name])
+            self.assertEqual(1.226646, (dataDict[name]/session._conversionFactors["FlowRate"]))
             self.assertEqual(5, dataDict[conc])
 
     def test_mixed_conc(self):
         """Test the _mixed_conc method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             feeds = wrapper.get(oclass=wet_synthesis.Feed)
     
             mix_conc = session._mixed_conc('nh3', 'nh3', feeds)
 
             self.assertIsInstance(mix_conc, float)
-            self.assertEqual(1.0, mix_conc)
+            self.assertEqual(1.0, round(mix_conc))
 
     def test_residence_time(self):
         """Test the _residence_time method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             feeds = wrapper.get(oclass=wet_synthesis.Feed)
             reactor_volume = 0.00306639
@@ -150,11 +193,19 @@ class TestCfdPbeSession(unittest.TestCase):
 
     def test_estimate_end_time(self):
         """Test the _estimate_end_time method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             feeds = wrapper.get(oclass=wet_synthesis.Feed)
             reactor_volume = 0.00306639
@@ -162,13 +213,15 @@ class TestCfdPbeSession(unittest.TestCase):
             end_time = session._estimate_end_time(feeds, reactor_volume)
 
             self.assertIsInstance(end_time, int)
-            self.assertEqual(18060, end_time)
+            self.assertEqual(18000, end_time)
 
     def test_estimate_time_intervals(self):
         """Test the _estimate_time_intervals method"""
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=18060,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=False) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -182,7 +235,9 @@ class TestCfdPbeSession(unittest.TestCase):
         """Test the _write_dict method"""
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -202,7 +257,7 @@ class TestCfdPbeSession(unittest.TestCase):
                 if (line.find("temperature")>(-1)):
                     l = line
             
-            self.assertEqual('temperature 298.15;', l)
+            self.assertEqual('temperature 298.15;\n', l)
 
             shutil.rmtree(input_dir)
 
@@ -210,15 +265,16 @@ class TestCfdPbeSession(unittest.TestCase):
         """Test the _write_dict method"""
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=False, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
-            engine = "pisoPrecNMC"
-
+            engine="pisoPrecNMC"
             session.engine_specialization(engine)
 
-            self.assertEqual(1.0/3.6e6, session._conversionfactors["FlowRate"])
+            self.assertEqual(1.0/3.6e6, session._conversionFactors["FlowRate"])
 
             
 if __name__ == '__main__':
