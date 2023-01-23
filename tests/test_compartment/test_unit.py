@@ -91,6 +91,9 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_select_mesh(self):
         """Test the _select_mesh method"""
+        cuds = get_cuds(self.template_wrapper)
+        accuracy = cuds['accuracy_level']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=False, end_time=0.0011,
@@ -98,6 +101,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(accuracy)
 
             accuracy_level = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)[0]
 
@@ -151,7 +155,7 @@ class TestCompartmentSession(unittest.TestCase):
 
             feed = wrapper.get(oclass=wet_synthesis.Feed)[2]
             name = 'flowrate_' + feed.name
-            conc = 'conc_in_' + feed.get(oclass=wet_synthesis.Component)[0]
+            conc = 'conc_in_' + feed.get(oclass=wet_synthesis.Component).name
             
             session._insert_feed(feed, dataDict)
 
@@ -272,15 +276,12 @@ class TestCompartmentSession(unittest.TestCase):
                 if (line.find("temperature")>(-1)):
                     l = line
             
-            self.assertEqual('temperature 298.15;', l)
+            self.assertEqual('temperature 298.15;\n', l)
 
             shutil.rmtree(input_dir)
 
     def test_update_files(self):
         """Test the _update_files method"""
-        cuds = get_cuds(self.template_wrapper)
-        solid = cuds['solidParticle']
-
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=False, end_time=0.0011,
@@ -288,12 +289,11 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(solid)
 
             session._case_dir = os.path.join(currentDir, 'data')
-            solidParticle = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
+            dataDict = dict({'temperature': 298.15})
 
-            session._update_files("/compartmentSimulation/caseSetup.yml", solidParticle, wrapper)
+            session._update_files(dataDict)
 
             input_dir = os.path.join(currentDir, 'data', 'compartmentSimulation')
             res_path = os.path.join(input_dir, "caseSetup.yml")
@@ -317,7 +317,7 @@ class TestCompartmentSession(unittest.TestCase):
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
-            self.assertEqual(1.0/3.6e6, self._conversionfactors["FlowRate"])
+            self.assertEqual(1.0/3.6e6, session._conversionfactors["FlowRate"])
 
             
 if __name__ == '__main__':
