@@ -1,5 +1,5 @@
 """Common functions for tests"""
-
+from typing import Dict, List, Union
 
 from osp.core.cuds import Cuds
 from osp.core.namespaces import wet_synthesis
@@ -87,3 +87,17 @@ def generate_cuds() -> Cuds:
         wrapper.add(compartmentNetwork)
 
         return wrapper
+
+def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
+
+    cuds = dict()
+    cuds['accuracy_level'] = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)
+    cuds['pressure'] = wrapper.get(oclass=wet_synthesis.Pressure)
+    cuds['temperature'] = wrapper.get(oclass=wet_synthesis.Temperature)
+    cuds['rotationalSpeed'] = wrapper.get(oclass=wet_synthesis.RotationalSpeed)
+    cuds['solidParticle'] = wrapper.get(oclass=wet_synthesis.SolidParticle)
+    cuds['feeds'] = wrapper.get(oclass=wet_synthesis.Feed)
+    cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)
+    cuds['compartmentNetwork'] = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)
+
+    return cuds
