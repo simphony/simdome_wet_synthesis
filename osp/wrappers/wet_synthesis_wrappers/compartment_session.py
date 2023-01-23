@@ -77,34 +77,29 @@ class CompartmentSession(SimWrapperSession):
             if retcode == 0:
                 print("\n{} CFD simulation finished successfully\n".format(self._engine))
 
+                cwd = self._case_dir + '/compartmentSimulation/'
+                retcode = subprocess.call(["./reactDivision"], cwd=cwd)
+
+                if retcode == 0:
+                    print("\nReactor division finished successfully\n")
+
+                    self._update_compartment_cuds(root_cuds_object)
+                    print("Compartment data is updated\n")
+
+                    retcode = subprocess.call(["mpirun", "-np", str(self._num_proc), "python3", "runPrecSolver.py"], cwd=cwd)
+
+                    if retcode == 0:
+                        print("\nCompartment simulation finished successfully\n")
+
+                        self._update_size_dist_cud(root_cuds_object)
+
+                    else:
+                        print("\nCompartment simulation terminated with exit code {:d}\n".format(retcode))
+                else:
+                    print("\nReactor division terminated with exit code {:d}\n".format(retcode))
             else:
                 print("\n{} CFD simulation terminated with exit code {:d}\n".format(
                     self._engine, retcode))
-
-
-            cwd = self._case_dir + '/compartmentSimulation/'
-            retcode = subprocess.call(["./reactDivision"], cwd=cwd)
-
-            if retcode == 0:
-                print("\nReactor division finished successfully\n")
-
-                self._update_compartment_cuds(root_cuds_object)
-                print("Compartment data is updated\n")
-
-            else:
-                print("\nReactor division terminated with exit code {:d}\n".format(retcode))
-
-
-            retcode = subprocess.call(["mpirun", "-np", str(self._num_proc), "python3", "runPrecSolver.py"], cwd=cwd)
-
-            if retcode == 0:
-                print("\nCompartment simulation finished successfully\n")
-
-                self._update_size_dist_cud(root_cuds_object)
-
-            else:
-                print("\nCompartment simulation terminated with exit code {:d}\n".format(retcode))
-
 
 
     # OVERRIDE

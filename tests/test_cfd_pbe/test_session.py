@@ -110,7 +110,7 @@ class TestWrapper(unittest.TestCase):
 
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
