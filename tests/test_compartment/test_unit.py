@@ -157,12 +157,11 @@ class TestCompartmentSession(unittest.TestCase):
             component = feed.get(oclass=wet_synthesis.Component)[0]
             name = 'flowrate_' + feed.name
             conc = 'conc_in_' + component.name
-            print(component.name)
             
             session._insert_feed(feed, dataDict)
 
             self.assertIsInstance(dataDict, dict)
-            self.assertEqual(1.226646, dataDict[name])
+            self.assertEqual(1.226646, (dataDict[name]/session._conversionFactors["FlowRate"]))
             self.assertEqual(5, dataDict[conc])
 
     def test_mixed_conc(self):
