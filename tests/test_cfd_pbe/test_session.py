@@ -1,6 +1,6 @@
 """Tests the SimPhoNy wrapper API methods."""
 
-import unittest, os
+import unittest, os, inspect
 from uuid import UUID
 
 from common import generate_cuds, get_cuds
@@ -10,6 +10,10 @@ from osp.core.namespaces import wet_synthesis
 from osp.wrappers.wet_synthesis_wrappers import CfdPbeSession
 from osp.wrappers.wet_synthesis_wrappers.utils import plot_size_dist
 from osp.core.utils import pretty_print
+
+frame = inspect.currentframe()
+filePath = inspect.getfile(frame)
+currentDir = os.path.realpath(os.path.abspath(os.path.dirname(filePath)))
 
 
 class TestWrapper(unittest.TestCase):
@@ -124,6 +128,8 @@ class TestWrapper(unittest.TestCase):
             # Get the results
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            sizeDistPlot = os.path.join(currentDir, 'volPercentDist.png')
+            self.assertTrue(os.path.isfile(sizeDistPlot))
 
         self.assertFalse(os.path.isdir(simulation_dir))
 
