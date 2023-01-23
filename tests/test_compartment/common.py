@@ -91,13 +91,13 @@ def generate_cuds() -> Cuds:
 def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
 
     cuds = dict()
-    cuds['accuracy_level'] = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel(number=0))
-    cuds['pressure'] = wrapper.get(oclass=wet_synthesis.Pressure)
-    cuds['temperature'] = wrapper.get(oclass=wet_synthesis.Temperature)
-    cuds['rotationalSpeed'] = wrapper.get(oclass=wet_synthesis.RotationalSpeed)
-    cuds['solidParticle'] = wrapper.get(oclass=wet_synthesis.SolidParticle)
-    cuds['feeds'] = wrapper.get(oclass=wet_synthesis.Feed)
-    cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)
-    cuds['compartmentNetwork'] = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)
+    cuds['accuracy_level'] = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)[0]
+    cuds['pressure'] = wrapper.get(oclass=wet_synthesis.Pressure)[0]
+    cuds['temperature'] = wrapper.get(oclass=wet_synthesis.Temperature)[0]
+    cuds['rotationalSpeed'] = wrapper.get(oclass=wet_synthesis.RotationalSpeed)[0]
+    cuds['solidParticle'] = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
+    cuds['feeds'] = wrapper.get(oclass=wet_synthesis.Feed)[0]
+    cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
+    cuds['compartmentNetwork'] = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0]
 
     return cuds
