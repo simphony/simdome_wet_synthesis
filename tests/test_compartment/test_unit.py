@@ -50,6 +50,9 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_update_size_dist_cud(self):
         """Test the _update_size_dist_cud method"""
+        cuds = get_cuds(self.template_wrapper)
+        sizeDist = cuds['sizeDistribution']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -57,6 +60,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(sizeDist)
 
             session._case_dir = os.path.join(currentDir, 'data')
 
@@ -69,6 +73,9 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_update_compartment_cuds(self):
         """Test the _select_mesh method"""
+        cuds = get_cuds(self.template_wrapper)
+        compartmentNet = cuds['compartmentNetwork']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -76,6 +83,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(compartmentNet)
 
             session._case_dir = os.path.join(currentDir, 'data')
             session._update_compartment_cuds(wrapper)
@@ -101,6 +109,9 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_insert_data(self):
         """Test the _insert_data method"""
+        cuds = get_cuds(self.template_wrapper)
+        temp = cuds['temperature']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -108,6 +119,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(temp)
 
             dataDict = dict()
 
@@ -122,6 +134,11 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_insert_feed(self):
         """Test the _insert_feed method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -129,6 +146,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             dataDict = dict()
 
@@ -144,6 +162,11 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_mixed_conc(self):
         """Test the _mixed_conc method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -151,6 +174,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             feeds = wrapper.get(oclass=wet_synthesis.Feed)
     
@@ -161,6 +185,11 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_residence_time(self):
         """Test the _residence_time method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -168,6 +197,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             feeds = wrapper.get(oclass=wet_synthesis.Feed)
             reactor_volume = 0.00306639
@@ -179,6 +209,11 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_estimate_end_time(self):
         """Test the _estimate_end_time method"""
+        cuds = get_cuds(self.template_wrapper)
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -186,6 +221,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(metals, nh3, naoh)
 
             feeds = wrapper.get(oclass=wet_synthesis.Feed)
             reactor_volume = 0.00306639
@@ -243,6 +279,9 @@ class TestCompartmentSession(unittest.TestCase):
 
     def test_update_files(self):
         """Test the _update_files method"""
+        cuds = get_cuds(self.template_wrapper)
+        solid = cuds['solidParticle']
+
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -250,6 +289,7 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper.add(solid)
 
             session._case_dir = os.path.join(currentDir, 'data')
             solidParticle = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
@@ -268,14 +308,6 @@ class TestCompartmentSession(unittest.TestCase):
             
             self.assertEqual('T: 298.15', l)
 
-    # def test_add_division(self):
-    #     """Test the _write_dict method"""
-    #     with CompartmentSession(
-    #             engine="pisoPrecNMC", case="precNMC",
-    #             delete_simulation_files=True) as session:
-            
-    #         wet_synthesis.WetSynthesisWrapper(session=session)
-
     def test_engine_specialization(self):
         """Test the _write_dict method"""
         with CompartmentSession(
@@ -285,10 +317,6 @@ class TestCompartmentSession(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
-
-            engine = "pisoPrecNMC"
-
-            session.engine_specialization(engine)
 
             self.assertEqual(1.0/3.6e6, self._conversionfactors["FlowRate"])
 
