@@ -5,6 +5,7 @@ from osp.core.cuds import Cuds
 from osp.core.namespaces import wet_synthesis
 from osp.core.session import CoreSession
 from osp.core.utils import Cuds2dot
+from osp.core.utils import pretty_print
 
 def generate_cuds() -> Cuds:
     """Function to generate useful CUDS.
@@ -92,12 +93,20 @@ def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
 
     cuds = dict()
     cuds['accuracy_level'] = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)[0])
     cuds['pressure'] = wrapper.get(oclass=wet_synthesis.Pressure)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.Pressure)[0])
     cuds['temperature'] = wrapper.get(oclass=wet_synthesis.Temperature)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.Temperature)[0])
     cuds['rotationalSpeed'] = wrapper.get(oclass=wet_synthesis.RotationalSpeed)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.RotationalSpeed)[0])
     cuds['solidParticle'] = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.SolidParticle)[0])
     cuds['feeds'] = wrapper.get(oclass=wet_synthesis.Feed)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.Feed)[0])
     cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
     cuds['compartmentNetwork'] = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0]
+    pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
     return cuds
