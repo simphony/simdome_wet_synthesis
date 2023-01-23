@@ -69,7 +69,9 @@ class TestWrapper(unittest.TestCase):
         temp = cuds['temperature']
         rotation = cuds['rotationalSpeed']
         solid = cuds['solidParticle']
-        feeds = cuds['feeds']
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
         sizeDist = cuds['sizeDistribution']
         compartmentNet = cuds['compartmentNetwork']
 
@@ -80,7 +82,7 @@ class TestWrapper(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, temp, rotation, solid, feeds, sizeDist, compartmentNet)
+            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist, compartmentNet)
 
             session._apply_added(wrapper, 0)
 
@@ -98,7 +100,9 @@ class TestWrapper(unittest.TestCase):
         temp = cuds['temperature']
         rotation = cuds['rotationalSpeed']
         solid = cuds['solidParticle']
-        feeds = cuds['feeds']
+        metals = cuds['metals']
+        nh3 = cuds['nh3']
+        naoh = cuds['naoh']
         sizeDist = cuds['sizeDistribution']
         compartmentNet = cuds['compartmentNetwork']
 
@@ -108,7 +112,7 @@ class TestWrapper(unittest.TestCase):
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, temp, rotation, solid, feeds, sizeDist, compartmentNet)
+            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist, compartmentNet)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
