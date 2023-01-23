@@ -6,7 +6,7 @@ import sys, traceback, argparse
 from osp.core.namespaces import wet_synthesis
 from osp.core.cuds import Cuds
 
-from tests.test_compartment.common import generate_cuds
+from common import generate_cuds
 from osp.wrappers.wet_synthesis_wrappers import CompartmentSession
 from osp.wrappers.wet_synthesis_wrappers.utils import plot_size_dist
 from osp.core.utils import pretty_print
