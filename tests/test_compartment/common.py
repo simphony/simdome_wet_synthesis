@@ -91,7 +91,7 @@ def generate_cuds() -> Cuds:
 def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
 
     cuds = dict()
-    cuds['accuracy_level'] = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel)
+    cuds['accuracy_level'] = wrapper.get(oclass=wet_synthesis.SliderAccuracyLevel(number=0))
     cuds['pressure'] = wrapper.get(oclass=wet_synthesis.Pressure)
     cuds['temperature'] = wrapper.get(oclass=wet_synthesis.Temperature)
     cuds['rotationalSpeed'] = wrapper.get(oclass=wet_synthesis.RotationalSpeed)
