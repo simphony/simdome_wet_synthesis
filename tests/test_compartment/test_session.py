@@ -3,7 +3,7 @@
 import unittest, os
 from uuid import UUID
 
-from .common import generate_cuds
+from tests.test_compartment.common import generate_cuds
 from osp.core.cuds import Cuds
 from osp.core.namespaces import wet_synthesis
 
