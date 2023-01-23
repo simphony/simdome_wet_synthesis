@@ -85,11 +85,9 @@ class CfdPbeSession(SimWrapperSession):
         """ Loads the cuds object from the simulation engine """
         for uid in uids:
             try:
-                cuds_object = self._registry.get(uid)
+                yield self._registry.get(uid)
             except KeyError:
                 yield None
-
-            yield cuds_object
 
     # OVERRIDE
     def _apply_added(self, root_obj, buffer):

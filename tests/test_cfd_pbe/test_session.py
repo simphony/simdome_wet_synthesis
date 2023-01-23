@@ -34,7 +34,7 @@ class TestWrapper(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             try:
                 self.assertIsInstance(str(session), str)
-                self.assertIn('CFD-PBE', str(session).lower())
+                self.assertIn('cfd-pbe', str(session).lower())
             finally:
                 session.close()
 
@@ -73,7 +73,6 @@ class TestWrapper(unittest.TestCase):
         nh3 = cuds['nh3']
         naoh = cuds['naoh']
         sizeDist = cuds['sizeDistribution']
-        compartmentNet = cuds['compartmentNetwork']
 
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
@@ -104,7 +103,6 @@ class TestWrapper(unittest.TestCase):
         nh3 = cuds['nh3']
         naoh = cuds['naoh']
         sizeDist = cuds['sizeDistribution']
-        compartmentNet = cuds['compartmentNetwork']
 
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",

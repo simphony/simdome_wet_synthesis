@@ -98,6 +98,5 @@ def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
     cuds['nh3'] = wrapper.get(oclass=wet_synthesis.Feed)[1]
     cuds['naoh'] = wrapper.get(oclass=wet_synthesis.Feed)[2]
     cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
-    cuds['compartmentNetwork'] = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0]
 
     return cuds
