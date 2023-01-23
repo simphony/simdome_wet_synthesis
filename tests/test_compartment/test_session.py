@@ -68,9 +68,9 @@ class TestWrapper(unittest.TestCase):
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
-            wet_synthesis.WetSynthesisWrapper(session=session)
+            wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
-            session._apply_added()
+            session._apply_added(wrapper, 0)
 
             self.assertTrue(session._initialized)
 
@@ -87,6 +87,7 @@ class TestWrapper(unittest.TestCase):
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
+            print(wrapper)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
