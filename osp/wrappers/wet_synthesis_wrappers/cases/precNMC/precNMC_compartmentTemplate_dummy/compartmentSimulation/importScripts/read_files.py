@@ -51,6 +51,7 @@ def read_field_internal(lines, data_format):
         if (b'internalField' in line) or (b'value' in line):
             break
     print('Hello\n')
+    print(line)
     
     internal_field = None
 
@@ -75,6 +76,7 @@ def read_field_internal(lines, data_format):
                 buffer, dtype='d', count=field_size, offset=1)
 
     elif b'uniform' in line:
+        print('Hello, uniform \n')
         return float(re.sub(b'\W', b'', line.split(b'uniform')[-1]))
 
     else:
