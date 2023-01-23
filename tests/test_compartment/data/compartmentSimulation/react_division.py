@@ -121,7 +121,6 @@ def main(argv):
             region_p = p_Metal_NaOH[region_condition]
             region_p_mean = np.mean(region_p)
 
-            print(epsilon, region_condition)
             region_epsilon = epsilon[region_condition]
 
             if (region_p_mean < low_limit_p or region_p_mean > high_limit_p):
