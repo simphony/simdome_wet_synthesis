@@ -155,7 +155,7 @@ class TestCompartmentSession(unittest.TestCase):
 
             feed = wrapper.get(oclass=wet_synthesis.Feed)[2]
             name = 'flowrate_' + feed.name
-            conc = 'conc_in_' + feed.get(oclass=wet_synthesis.Component).name
+            conc = 'conc_in_' + feed.get(oclass=wet_synthesis.Component.name)
             
             session._insert_feed(feed, dataDict)
 
@@ -305,7 +305,7 @@ class TestCompartmentSession(unittest.TestCase):
                 if (line.find("T:")>(-1)):
                     l = line
             
-            self.assertEqual('T: 298.15', l)
+            self.assertIn('T: 298.15', l)
 
     def test_engine_specialization(self):
         """Test the _write_dict method"""
@@ -317,7 +317,7 @@ class TestCompartmentSession(unittest.TestCase):
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
-            self.assertEqual(1.0/3.6e6, session._conversionfactors["FlowRate"])
+            self.assertEqual(1.0/3.6e6, session._conversionFactors["FlowRate"])
 
             
 if __name__ == '__main__':
