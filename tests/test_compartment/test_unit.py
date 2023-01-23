@@ -36,7 +36,7 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _extract_moments method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -55,7 +55,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -77,7 +77,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -93,7 +93,7 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _select_mesh method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -113,7 +113,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -140,7 +140,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -168,7 +168,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -191,7 +191,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -215,7 +215,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -234,7 +234,7 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _estimate_time_intervals method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=18060,
+                delete_simulation_files=False, end_time=18060,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=False) as session:
             
@@ -250,7 +250,7 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _write_dict method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -283,7 +283,7 @@ class TestCompartmentSession(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
@@ -311,7 +311,7 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _write_dict method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True, end_time=0.0011,
+                delete_simulation_files=False, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             
