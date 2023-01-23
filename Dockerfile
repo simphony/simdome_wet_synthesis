@@ -16,6 +16,8 @@ RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh 
     /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
     conda update conda && conda create --name wet-synthesis
 
+RUN conda install mkl-service
+
 RUN cd / && mkdir cmake && cd cmake && \
     CMAKE_VERSION=3.20.1 && \
     wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
