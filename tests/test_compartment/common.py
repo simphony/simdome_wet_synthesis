@@ -11,8 +11,6 @@ def generate_cuds() -> Cuds:
     
     Returns the wrapper CUDS objects necessary for simulation."""
 
-    print('Hello!\n')
-
     with CoreSession() as session:
         wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 

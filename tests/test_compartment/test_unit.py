@@ -36,7 +36,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _extract_moments method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -50,7 +52,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _update_size_dist_cud method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -67,12 +71,14 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _select_mesh method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
             session._case_dir = os.path.join(currentDir, 'data')
-            session._ipdate_compartment_cuds(wrapper)
+            session._update_compartment_cuds(wrapper)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
@@ -80,7 +86,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _select_mesh method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -95,7 +103,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _insert_data method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -114,7 +124,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _insert_feed method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -134,7 +146,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _mixed_conc method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -149,7 +163,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _residence_time method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -165,7 +181,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _estimate_end_time method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -181,11 +199,12 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _estimate_time_intervals method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=18060,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
-            session._end_time = 18160
             times = session._estimate_time_intervals()
 
             self.assertIsInstance(times, object)
@@ -196,7 +215,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _write_dict method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 
@@ -220,18 +241,20 @@ class TestCompartmentSession(unittest.TestCase):
 
             shutil.rmtree(input_dir)
 
-    def test_update_yaml(self):
-        """Test the _write_dict method"""
+    def test_update_files(self):
+        """Test the _update_files method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
             session._case_dir = os.path.join(currentDir, 'data')
             solidParticle = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
 
-            session._update_yaml("/compartmentSimulation/caseSetup.yml", solidParticle, wrapper)
+            session._update_files("/compartmentSimulation/caseSetup.yml", solidParticle, wrapper)
 
             input_dir = os.path.join(currentDir, 'data', 'compartmentSimulation')
             res_path = os.path.join(input_dir, "caseSetup.yml")
@@ -257,7 +280,9 @@ class TestCompartmentSession(unittest.TestCase):
         """Test the _write_dict method"""
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
             
             wet_synthesis.WetSynthesisWrapper(session=session)
 

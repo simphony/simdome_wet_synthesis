@@ -30,11 +30,11 @@ class TestWrapper(unittest.TestCase):
 
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
-                delete_simulation_files=True) as session:
+                delete_simulation_files=True, end_time=0.0011,
+                write_interval=1, num_moments=4,
+                num_proc=1, dummy=True) as session:
 
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-
-            session._dummy = True
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
