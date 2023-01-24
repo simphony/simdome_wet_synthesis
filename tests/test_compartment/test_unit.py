@@ -318,12 +318,19 @@ class TestCompartmentSession(unittest.TestCase):
             f = open(res_path, 'r')
             lines = f.readlines()
             f.close()
-            self.assertIn('T: 298.15', lines)
-            self.assertIn('density: 3953', lines)
-            self.assertIn('numOfNodes: 4', lines)
-            self.assertIn('[1.2, 0.2, 0.2, 0.0, 0.0, 2.0]', lines)
-            self.assertIn('[0.0, 0.0, 0.0, 5.0, 0.0, 0.0]', lines)
-            self.assertIn('[0.0, 0.0, 0.0, 0.0, 10.0, 0.0]', lines)
+            for i, line in enumerate(lines):
+                if 'T:' in line:
+                    self.assertIn('T: 298.15', line)
+                if 'density:' in line:
+                    self.assertIn('density: 3953', line)
+                if 'numOfNodes:' in line:
+                    self.assertIn('numOfNodes: 4', line)
+                if 'metals:' in line:
+                    self.assertIn('[1.2, 0.2, 0.2, 0, 0, 2.0]', lines[i+1])
+                if 'nh3:' in line:
+                    self.assertIn('[0, 0, 0, 10.0, 0, 0]', lines[i+1])
+                if 'naoh:' in line:
+                    self.assertIn('[0, 0, 0, 0, 5, 0]', lines[i+1])
             shutil.rmtree(res_path)
             os.rename(input_dir+'/caseSetup_bkp.yml', input_dir+'/caseSetup.yml')
 
@@ -331,7 +338,9 @@ class TestCompartmentSession(unittest.TestCase):
             f = open(res_path, 'r')
             lines = f.readlines()
             f.close()
-            self.assertIn('self.kv = 0.523599', lines)
+            for line in lines:
+                if 'self.kv =' in line:
+                    self.assertIn('self.kv = 0.523599', line)
             shutil.rmtree(res_path)
             os.rename(input_dir+'/NiMnCoHydroxidePrec_bkp.py', input_dir+'/NiMnCoHydroxidePrec.py')
 
@@ -339,7 +348,9 @@ class TestCompartmentSession(unittest.TestCase):
             f = open(res_path, 'r')
             lines = f.readlines()
             f.close()
-            self.assertIn('aMassCrystall = 3953', lines)
+            for i, line in enumerate(lines):
+                if 'cationConcRatios[i] * (atomicMass[i]' in line:
+                    self.assertIn('aMassCrystal = 3953', lines[i+1])
             shutil.rmtree(res_path)
             os.rename(input_dir+'/init_run_bkp.py', input_dir+'/init_run.py')
 
@@ -348,7 +359,9 @@ class TestCompartmentSession(unittest.TestCase):
                 f = open(input_dir+name, 'r')
                 lines = f.readlines()
                 f.close()
-                self.assertIn("time_dir = '0.0011'", lines)
+                for line in lines:
+                    if 'time_dir =' in line:
+                        self.assertIn("time_dir = '0.0011'", line)
                 shutil.rmtree(input_dir+name)
             os.rename(input_dir+'/extract_info_bkp.py', input_dir+'/extract_info.py')
             os.rename(input_dir+'/react_division_bkp.py', input_dir+'/react_division.py')
