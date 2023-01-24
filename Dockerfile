@@ -14,7 +14,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y \
 
 RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh && \
     /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
-    conda update conda && conda create --name wet-synthesis
+    conda update conda && conda update -n base -c defaults conda && conda create --name wet-synthesis
 
 RUN conda install mkl-service
 
