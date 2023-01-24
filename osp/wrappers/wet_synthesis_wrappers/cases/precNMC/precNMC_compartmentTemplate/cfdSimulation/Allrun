@@ -44,11 +44,10 @@ else
     fi
 
     echo "Running $application in parallel on $PWD using $1 processes"
-    mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
+    mpirun -np $1 --output-filename log_cfd ./runApp $1 > /dev/null 2>&1
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
     cp system/updatingFiles/fvSchemes.0 system/fvSchemes
-    mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
         ./reconstruct
@@ -57,6 +56,18 @@ else
             rm -rf processor*
         fi
     fi
+
+    cp 0.bkp/p_env* 0.001/
+    ./decompose
+
+    ERROR_CODE=$?
+    if [ $ERROR_CODE -ne 0 ]; then
+        exit $ERROR_CODE
+    fi
+
+    echo "Running $application in parallel on $PWD using $1 processes"
+    mpirun -np $1 --output-filename log_mixing ./runApp $1 > /dev/null 2>&1
+
 fi
 
 postProcess -func writeCellVolumes -latestTime

@@ -27,10 +27,10 @@ fi
 
 if [ $1 -eq 1 ]; then
     echo "Running $application on $PWD"
-    ./runApp $1 > log.txt
+    ./runApp $1 > log_cfd.txt
     cp system/updatingFiles/controlDict.0 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
-    ./runApp $1 > log.txt
+    ./runApp $1 > log_pbe.txt
 else
     m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
 
@@ -42,10 +42,10 @@ else
     fi
 
     echo "Running $application in parallel on $PWD using $1 processes"
-    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+    mpirun -np $1 --output-filename log_cfd ./runApp $1 > /dev/null 2>&1
     cp system/updatingFiles/controlDict.0 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
-    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+    mpirun -np $1 --output-filename log_pbe ./runApp $1 > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
         ./reconstruct
