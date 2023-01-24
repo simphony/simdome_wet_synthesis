@@ -210,8 +210,9 @@ class CompartmentSession(SimWrapperSession):
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639) + 60
         if self._dummy:
-            self._end_time = 20
+            self._end_time = 10.001
         dataDict.update({'end_time': self._end_time})
+        print(self._end_time)
 
         if self._write_interval is None:
             self._write_interval = 1
@@ -451,7 +452,7 @@ class CompartmentSession(SimWrapperSession):
         times = np.zeros(14)
 
         if self._dummy:
-            times[0] = 10
+            times[0] = 0.001
         else:
             times[0] = 10
             times[1] = 30

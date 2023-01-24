@@ -17,7 +17,7 @@ FoamFile
 
 #include "$FOAM_CASE/include/input"
 
-application     simpleEnvMixing;
+application     pisoFoam;
 
 startFrom       latestTime;
 
@@ -25,13 +25,13 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         $t0;
+endTime         $t2;
 
-deltaT          1;
+deltaT          1e-4;
 
 writeControl    runTime;
 
-writeInterval   5;
+writeInterval   0.0005;
 
 purgeWrite      0;
 

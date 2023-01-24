@@ -30,6 +30,7 @@ if [ $1 -eq 1 ]; then
     ./runApp $1 > log.txt
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
+    cp system/updatingFiles/fvSchemes.0 system/fvSchemes
     ./runApp $1 > log.txt
 else
     m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
@@ -45,6 +46,7 @@ else
     mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
+    cp system/updatingFiles/fvSchemes.0 system/fvSchemes
     mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
@@ -58,8 +60,8 @@ fi
 
 postProcess -func writeCellVolumes -latestTime
 
-cp ../p_env1 20/
-cp ../p_env3 20/
-cp ../k 20/
-cp ../epsilon 20/
-cp ../phi 20/
+cp ../p_env1 10.001/
+cp ../p_env3 10.001/
+cp ../k 10.001/
+cp ../epsilon 10.001/
+cp ../phi 10.001/
