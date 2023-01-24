@@ -331,7 +331,7 @@ class TestCompartmentSession(unittest.TestCase):
                     self.assertIn('[0, 0, 0, 10.0, 0, 0]', lines[i+1])
                 if 'naoh:' in line:
                     self.assertIn('[0, 0, 0, 0, 5, 0]', lines[i+1])
-            shutil.rmtree(res_path)
+            os.remove(res_path)
             os.rename(input_dir+'/caseSetup_bkp.yml', input_dir+'/caseSetup.yml')
 
             res_path = os.path.join(input_dir, 'importScripts', 'NiMnCoHydroxidePrec.py')
@@ -341,7 +341,7 @@ class TestCompartmentSession(unittest.TestCase):
             for line in lines:
                 if 'self.kv =' in line:
                     self.assertIn('self.kv = 0.523599', line)
-            shutil.rmtree(res_path)
+            os.remove(res_path)
             os.rename(input_dir+'/NiMnCoHydroxidePrec_bkp.py', input_dir+'/NiMnCoHydroxidePrec.py')
 
             res_path = os.path.join(input_dir, 'importScripts', 'init_run.py')
@@ -351,7 +351,7 @@ class TestCompartmentSession(unittest.TestCase):
             for i, line in enumerate(lines):
                 if 'cationConcRatios[i] * (atomicMass[i]' in line:
                     self.assertIn('aMassCrystal = 3953', lines[i+1])
-            shutil.rmtree(res_path)
+            os.remove(res_path)
             os.rename(input_dir+'/init_run_bkp.py', input_dir+'/init_run.py')
 
             name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
@@ -362,7 +362,7 @@ class TestCompartmentSession(unittest.TestCase):
                 for line in lines:
                     if 'time_dir =' in line:
                         self.assertIn("time_dir = '0.0011'", line)
-                shutil.rmtree(input_dir+name)
+                os.remove(input_dir+name)
             os.rename(input_dir+'/extract_info_bkp.py', input_dir+'/extract_info.py')
             os.rename(input_dir+'/react_division_bkp.py', input_dir+'/react_division.py')
             os.rename(input_dir+'/importScripts/read_files_bkp.py', input_dir+'/importScripts/read_files.py')

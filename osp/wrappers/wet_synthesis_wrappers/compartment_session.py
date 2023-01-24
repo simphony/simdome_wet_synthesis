@@ -496,7 +496,7 @@ class CompartmentSession(SimWrapperSession):
         MW = dict['crystal_MW']
         KV = dict['shape_factor']
 
-        nodes = self._num_moments / 2
+        nodes = int(self._num_moments / 2)
 
         concs = np.zeros(6)
         list = ['nickel', 'manganese', 'cobalt', 'so4', 'nh3', 'na']
