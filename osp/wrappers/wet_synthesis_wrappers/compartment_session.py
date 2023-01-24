@@ -212,7 +212,6 @@ class CompartmentSession(SimWrapperSession):
         if self._dummy:
             self._end_time = 10.001
         dataDict.update({'end_time': self._end_time})
-        print(self._end_time)
 
         if self._write_interval is None:
             self._write_interval = 1

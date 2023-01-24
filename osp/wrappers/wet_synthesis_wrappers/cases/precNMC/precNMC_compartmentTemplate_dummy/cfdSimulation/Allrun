@@ -27,11 +27,11 @@ fi
 
 if [ $1 -eq 1 ]; then
     echo "Running $application on $PWD"
-    ./runApp $1 > log.txt
+    ./runApp $1 > log_cfd.txt
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
     cp system/updatingFiles/fvSchemes.0 system/fvSchemes
-    ./runApp $1 > log.txt
+    ./runApp $1 > log_mixing.txt
 else
     m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
 
