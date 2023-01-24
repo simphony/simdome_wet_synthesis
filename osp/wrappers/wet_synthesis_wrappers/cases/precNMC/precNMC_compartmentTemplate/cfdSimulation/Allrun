@@ -68,6 +68,14 @@ else
     echo "Running $application in parallel on $PWD using $1 processes"
     mpirun -np $1 --output-filename log_mixing ./runApp $1 > /dev/null 2>&1
 
+    if [ $? -eq 0 ]; then
+        ./reconstruct
+
+        if [ $? -eq 0 ]; then
+            rm -rf processor*
+        fi
+    fi
+
 fi
 
 postProcess -func writeCellVolumes -latestTime
