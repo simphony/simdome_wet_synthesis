@@ -1,4 +1,4 @@
-# Example to use CFD-PBE wrapper
+# Example to use compartment wrapper
 import sys
 import traceback
 import argparse
