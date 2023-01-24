@@ -350,7 +350,7 @@ class TestCompartmentSession(unittest.TestCase):
             f.close()
             for i, line in enumerate(lines):
                 if 'cationConcRatios[i] * (atomicMass[i]' in line:
-                    self.assertIn('aMassCrystal = 3953', lines[i+1])
+                    self.assertIn('aMassCrystal = 92.338', lines[i+1])
             os.remove(res_path)
             os.rename(input_dir+'/init_run_bkp.py', input_dir+'/init_run.py')
 
