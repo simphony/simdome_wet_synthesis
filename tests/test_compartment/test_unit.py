@@ -342,7 +342,7 @@ class TestCompartmentSession(unittest.TestCase):
                 if 'self.kv =' in line:
                     self.assertIn('self.kv = 0.523599', line)
             os.remove(res_path)
-            os.rename(input_dir+'/NiMnCoHydroxidePrec_bkp.py', input_dir+'/NiMnCoHydroxidePrec.py')
+            os.rename(input_dir+'/importScripts/NiMnCoHydroxidePrec_bkp.py', input_dir+'/importScripts/NiMnCoHydroxidePrec.py')
 
             res_path = os.path.join(input_dir, 'importScripts', 'init_run.py')
             f = open(res_path, 'r')
