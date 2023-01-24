@@ -23,9 +23,8 @@ setup(
         "scipy",
         "sklearn",
         "mpi4py",
-        "matplotlib",
-        "mkl-services"
-    ],
+        "matplotlib"
+        ],
     python_requires=">=3.7",
     include_package_data=True,
     # entry_points={
