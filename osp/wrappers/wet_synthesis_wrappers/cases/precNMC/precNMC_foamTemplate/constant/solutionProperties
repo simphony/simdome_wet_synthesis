@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      solutionProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/include/input"
+
+metals (Nickel Manganese Cobalt);
+
+molecularDiffusivity (2e-9 2e-9 2e-9 2e-9 2e-9 2e-9);
+
+turbulentSchmidt    1.0;
+
+chemicallyInactiveRegions ();
+
+smallConc       1e-14;
+
+effectiveConc   1e-6;
+
+T       $temperature;
+
+rhoLiq      $liquid_density;
+
+activity
+{
+    type        Bromley;  // idealSolution, Bromley
+}
+
+newtonRaphson
+{
+    maxIter     100;
+    tol         1e-8;
+}
+
+// ************************************************************************* //
+

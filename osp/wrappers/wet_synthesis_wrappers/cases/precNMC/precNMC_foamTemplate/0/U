@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/include/input"
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform $internal_U;
+
+boundaryField
+{
+    top-wall
+    {
+        type            noSlip;
+    }
+    side-wall
+    {
+        type            noSlip;
+    }
+    bottom-wall
+    {
+        type            noSlip;
+    }
+    baffles
+    {
+        type            noSlip;
+    }
+    inlet-tubes
+    {
+        type            noSlip;
+    }
+    impeller
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    shaft
+    {
+        type            noSlip;
+    }
+
+    inlet-metal
+    {
+        type            flowRateInletVelocity;
+        volumetricFlowRate  $flowrate_metals; /* m3/s */
+    }
+    inlet-naoh
+    {
+        type            flowRateInletVelocity;
+        volumetricFlowRate  $flowrate_naoh; /* m3/s */
+    }
+    inlet-nh3
+    {
+        type            flowRateInletVelocity;
+        volumetricFlowRate  $flowrate_nh3; /* m3/s */
+    }
+    
+    outlet
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform $internal_U;
+    }
+}
+
+
+// ************************************************************************* //

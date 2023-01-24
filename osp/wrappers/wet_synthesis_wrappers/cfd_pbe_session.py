@@ -384,7 +384,7 @@ class CfdPbeSession(SimWrapperSession):
         else:
             times[0] = 10
             times[1] = 30
-            times[2] = cfd_time - 0.01
+            times[2] = cfd_time
             times[3] = cfd_time + 0.009981
             times[4] = cfd_time + 0.05991
             times[5] = cfd_time + 0.19981

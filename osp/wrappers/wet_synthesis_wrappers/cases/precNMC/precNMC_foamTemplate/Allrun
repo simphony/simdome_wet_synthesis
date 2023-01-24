@@ -1,0 +1,57 @@
+#!/bin/sh
+
+# Main script for running simulations
+# example of call: ./Allrun 3
+# First argument: number of processors to be used for calculation (Integer value)
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    echo -e "\nError:"
+    echo -e "OpenFOAM run functions not found\n" >&2
+    exit $ERROR_CODE
+fi
+
+application=$(getApplication)
+
+if [ ! -d "constant/polyMesh" ]; then
+    ./preRun
+fi
+
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    exit $ERROR_CODE
+fi
+
+if [ $1 -eq 1 ]; then
+    echo "Running $application on $PWD"
+    ./runApp $1 > log.txt
+    cp system/updatingFiles/controlDict.0 system/controlDict
+    cp system/updatingFiles/fvSolution.1 system/fvSolution
+    ./runApp $1 > log.txt
+else
+    m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
+
+    ./decompose
+
+    ERROR_CODE=$?
+    if [ $ERROR_CODE -ne 0 ]; then
+        exit $ERROR_CODE
+    fi
+
+    echo "Running $application in parallel on $PWD using $1 processes"
+    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+    cp system/updatingFiles/controlDict.0 system/controlDict
+    cp system/updatingFiles/fvSolution.1 system/fvSolution
+    mpirun -np $1 --output-filename log ./runApp $1 # > /dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        ./reconstruct
+
+        if [ $? -eq 0 ]; then
+            rm -rf processor*
+        fi
+    fi
+fi

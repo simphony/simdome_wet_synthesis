@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/include/input"
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform $internal_k;
+
+boundaryField
+{
+    top-wall
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+    side-wall
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+    bottom-wall
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+    baffles
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+    inlet-tubes
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+    impeller
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+    shaft
+    {
+        type            kLowReWallFunction;
+        value           $internalField;
+    }
+
+    inlet-metal
+    {
+        type        turbulentIntensityKineticEnergyInlet;
+        intensity   $inlet_turb_intensity;
+        value       $internalField;  // placeholder
+    }
+    inlet-naoh
+    {
+        type        turbulentIntensityKineticEnergyInlet;
+        intensity   $inlet_turb_intensity;
+        value       $internalField;  // placeholder
+    }
+    inlet-nh3
+    {
+        type        turbulentIntensityKineticEnergyInlet;
+        intensity   $inlet_turb_intensity;
+        value       $internalField;  // placeholder
+    }
+    
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform $backflow_k;
+    }
+}
+
+// ************************************************************************* //
