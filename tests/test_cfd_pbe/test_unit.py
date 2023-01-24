@@ -69,6 +69,10 @@ class TestCfdPbeSession(unittest.TestCase):
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
             plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            sizes = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
+            bin_i = sizes.get(oclass=wet_synthesis.Bin)[-1]
+            diameter = bin_i.get(oclass=wet_synthesis.ParticleDiameter)[0].value
+            self.assertEqual(14.937747721795278, diameter)
 
     def test_select_mesh(self):
         """Test the _select_mesh method"""
