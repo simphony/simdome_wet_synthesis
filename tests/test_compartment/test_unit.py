@@ -292,16 +292,16 @@ class TestCompartmentSession(unittest.TestCase):
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
             session._case_dir = os.path.join(currentDir, 'data')
-            dataDict = dict({'temperature': 298.15},
-                            {'crystal_density': 3953},
-                            {'crystal_MW': 92.338},
-                            {'shape_factor': 0.523599},
-                            {'conc_in_nickel': 1.6},
-                            {'conc_in_manganese': 0.2},
-                            {'conc_in_cobalt': 0.2},
-                            {'conc_in_so4': 2.0},
-                            {'conc_in_nh3': 10.0},
-                            {'conc_in_na': 5.0})
+            dataDict = dict({'temperature': 298.15,
+                            'crystal_density': 3953,
+                            'crystal_MW': 92.338,
+                            'shape_factor': 0.523599,
+                            'conc_in_nickel': 1.6,
+                            'conc_in_manganese': 0.2,
+                            'conc_in_cobalt': 0.2,
+                            'conc_in_so4': 2.0,
+                            'conc_in_nh3': 10.0,
+                            'conc_in_na': 5.0})
 
 
             input_dir = os.path.join(currentDir, 'data', 'compartmentSimulation')

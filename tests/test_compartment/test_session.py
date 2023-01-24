@@ -127,8 +127,16 @@ class TestWrapper(unittest.TestCase):
             # Get the results
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             plot_size_dist(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
+            sizes = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
+            bin_i = sizes.get(oclass=wet_synthesis.Bin)[-1]
+            diameter = bin_i.get(oclass=wet_synthesis.ParticleDiameter)[0].value
+            self.assertEqual(14.937747721795278, diameter)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
+            compartments = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0]
+            comp_i = compartments.get(oclass=wet_synthesis.Compartment)[-1]
+            epsilon = comp_i.get(oclass=wet_synthesis.TurbulentDissipationRate)[0].value
+            self.assertEqual(0.011057444226231, epsilon)
 
         self.assertFalse(os.path.isdir(simulation_dir))
 
