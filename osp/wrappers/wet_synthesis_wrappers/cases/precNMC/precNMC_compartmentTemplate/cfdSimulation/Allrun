@@ -27,12 +27,12 @@ fi
 
 if [ $1 -eq 1 ]; then
     echo "Running $application on $PWD"
-    ./runApp $1 > log.txt
+    ./runApp $1 > log_cfd.txt
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
     cp system/updatingFiles/fvSchemes.mix system/fvSchemes
     cp 0.bkp/p_env* 60/
-    ./runApp $1 > log.txt
+    ./runApp $1 > log_mixing.txt
 else
     m4 -D NUM=$1 < system/decomposeParDict.m4 > system/decomposeParDict
 
@@ -44,11 +44,29 @@ else
     fi
 
     echo "Running $application in parallel on $PWD using $1 processes"
-    mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
+    mpirun -np $1 --output-filename log_cfd ./runApp $1 > /dev/null 2>&1
     cp system/updatingFiles/controlDict.1 system/controlDict
     cp system/updatingFiles/fvSolution.1 system/fvSolution
     cp system/updatingFiles/fvSchemes.mix system/fvSchemes
-    mpirun -np $1 --output-filename log ./runApp $1 > /dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        ./reconstruct
+
+        if [ $? -eq 0 ]; then
+            rm -rf processor*
+        fi
+    fi
+
+    cp 0.bkp/p_env* 60/
+
+    ./decompose
+
+    ERROR_CODE=$?
+    if [ $ERROR_CODE -ne 0 ]; then
+        exit $ERROR_CODE
+    fi
+
+    mpirun -np $1 --output-filename log_mixing ./runApp $1 > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
         ./reconstruct

@@ -22,10 +22,9 @@ setup(
         "PyYaml",
         "scipy",
         "sklearn",
-        # "mpi4py",
+        "mpi4py",
         "matplotlib"
-        # "mkl-services"
-    ],
+        ],
     python_requires=">=3.7",
     include_package_data=True,
     # entry_points={
