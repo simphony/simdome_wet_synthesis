@@ -23,7 +23,7 @@ setup(
         "scipy",
         "sklearn",
         "mpi4py",
-        "matplotlib"
+        "matplotlib",
         "mkl-services"
     ],
     python_requires=">=3.7",
