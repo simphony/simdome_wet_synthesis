@@ -326,7 +326,7 @@ class TestCompartmentSession(unittest.TestCase):
                 if 'numOfNodes:' in line:
                     self.assertIn('numOfNodes: 4', line)
                 if 'metals:' in line:
-                    self.assertIn('[1.2, 0.2, 0.2, 0, 0, 2.0]', lines[i+1])
+                    self.assertIn('[1.6, 0.2, 0.2, 0, 0, 2.0]', lines[i+1])
                 if 'nh3:' in line:
                     self.assertIn('[0, 0, 0, 10.0, 0, 0]', lines[i+1])
                 if 'naoh:' in line:
