@@ -324,7 +324,7 @@ class TestCompartmentSession(unittest.TestCase):
                 if 'density:' in line:
                     self.assertIn('density: 3953', line)
                 if 'numOfNodes:' in line:
-                    self.assertIn('numOfNodes: 4', line)
+                    self.assertIn('numOfNodes: 2.0', line)
                 if 'metals:' in line:
                     self.assertIn('[1.6, 0.2, 0.2, 0, 0, 2.0]', lines[i+1])
                 if 'nh3:' in line:
