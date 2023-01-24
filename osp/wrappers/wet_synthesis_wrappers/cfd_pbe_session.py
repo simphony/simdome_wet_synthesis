@@ -85,11 +85,9 @@ class CfdPbeSession(SimWrapperSession):
         """ Loads the cuds object from the simulation engine """
         for uid in uids:
             try:
-                cuds_object = self._registry.get(uid)
+                yield self._registry.get(uid)
             except KeyError:
                 yield None
-
-            yield cuds_object
 
     # OVERRIDE
     def _apply_added(self, root_obj, buffer):
@@ -187,7 +185,7 @@ class CfdPbeSession(SimWrapperSession):
 
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
-                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639)
+                root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639) + 60
         self._end_time = 0.0011
         dataDict.update({'end_time': self._end_time})
 
@@ -253,7 +251,7 @@ class CfdPbeSession(SimWrapperSession):
 
         if self._engine == "pisoPrecNMC":
             output_path = os.path.join(
-                self._case_dir, 'postProcessing', 'outlet_average', '0.000992992',
+                self._case_dir, 'postProcessing', 'outlet_average', '0.001',
                 'surfaceFieldValue.dat')
 
             if os.path.isfile(output_path):
@@ -350,7 +348,7 @@ class CfdPbeSession(SimWrapperSession):
 
         residence_time = self._residence_time(feeds, reactor_volume)
 
-        end_time = 5*residence_time + 60
+        end_time = 5*residence_time
 
         # round the estimated end time
         if end_time > 1.0:
@@ -378,7 +376,7 @@ class CfdPbeSession(SimWrapperSession):
 
         # times[0] = 10
         # times[1] = 30
-        # times[2] = cfd_time - 0.01
+        # times[2] = cfd_time
         # times[3] = cfd_time + 0.009981
         # times[4] = cfd_time + 0.05991
         # times[5] = cfd_time + 0.19981
