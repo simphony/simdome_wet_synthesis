@@ -352,7 +352,7 @@ class TestCompartmentSession(unittest.TestCase):
                 if 'cationConcRatios[i] * (atomicMass[i]' in line:
                     self.assertIn('aMassCrystal = 92.338', lines[i+1])
             os.remove(res_path)
-            os.rename(input_dir+'/init_run_bkp.py', input_dir+'/init_run.py')
+            os.rename(input_dir+'/importScripts/init_run_bkp.py', input_dir+'/importScripts/init_run.py')
 
             name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
             for name in name_list:
