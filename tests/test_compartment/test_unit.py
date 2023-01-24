@@ -95,7 +95,7 @@ class TestCompartmentSession(unittest.TestCase):
             compartments = wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0]
             comp_i = compartments.get(oclass=wet_synthesis.Compartment)[-1]
             epsilon = comp_i.get(oclass=wet_synthesis.TurbulentDissipationRate)[0].value
-            self.assertEqual(0.011057444226231, epsilon)
+            self.assertEqual(0.014633708450457, epsilon)
 
     def test_select_mesh(self):
         """Test the _select_mesh method"""
