@@ -95,7 +95,7 @@ cd simdome_wet_synthesis
 and then run
 
 ```sh
-docker build .
+docker build -t simdome/wet_synthesis .
 ```
 
 to create the docker image. After that, run
