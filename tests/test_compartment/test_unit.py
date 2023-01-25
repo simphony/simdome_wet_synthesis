@@ -300,7 +300,8 @@ class TestCompartmentSession(unittest.TestCase):
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
 
             session._case_dir = os.path.join(currentDir, 'data')
-            dataDict = dict({'temperature': 298.15,
+            dataDict = dict({'liquid_density': 998.2,
+                            'temperature': 298.15,
                             'crystal_density': 3953,
                             'crystal_MW': 92.338,
                             'shape_factor': 0.523599,
@@ -327,6 +328,8 @@ class TestCompartmentSession(unittest.TestCase):
             lines = f.readlines()
             f.close()
             for i, line in enumerate(lines):
+                if 'rhoLiq:' in line:
+                    self.assertIn('rhoLiq: 998.2', line)
                 if 'T:' in line:
                     self.assertIn('T: 298.15', line)
                 if 'density:' in line:

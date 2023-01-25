@@ -70,6 +70,7 @@ class TestWrapper(unittest.TestCase):
         cuds = get_cuds(self.template_wrapper)
         accuracy = cuds['accuracy_level']
         press = cuds['pressure']
+        liquid_density = cuds['liquid_density']
         temp = cuds['temperature']
         rotation = cuds['rotationalSpeed']
         solid = cuds['solidParticle']
@@ -85,7 +86,7 @@ class TestWrapper(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist)
+            wrapper.add(accuracy, press, liquid_density, temp, rotation, solid, metals, nh3, naoh, sizeDist)
 
             session._apply_added(wrapper, 0)
 
@@ -100,6 +101,7 @@ class TestWrapper(unittest.TestCase):
         cuds = get_cuds(self.template_wrapper)
         accuracy = cuds['accuracy_level']
         press = cuds['pressure']
+        liquid_density = cuds['liquid_density']
         temp = cuds['temperature']
         rotation = cuds['rotationalSpeed']
         solid = cuds['solidParticle']
@@ -114,7 +116,7 @@ class TestWrapper(unittest.TestCase):
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, temp, rotation, solid, metals, nh3, naoh, sizeDist)
+            wrapper.add(accuracy, press, liquid_density, temp, rotation, solid, metals, nh3, naoh, sizeDist)
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
