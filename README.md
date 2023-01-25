@@ -37,6 +37,30 @@ work),
 ([v4.8.2](https://repo.anaconda.com/archive/) is known to work). Follow the links to find 
 installation instructions for each tool.
 
+In addition, to use the CFD-PBE Wrapper, it's necessary download the solver from the GitHub repository of Politecnico di Torino.
+
+```shell
+git clone https://github.com/mulmopro/wet-synthesis-route.git
+```
+
+After downloading it, enter the right directory and compile it.
+
+NOTE: before start the compilation, make sure to put the correct path to the sundials libraries
+in the *Allwmake* file in the *wet-synthesis-route/cfd_pbe_openfoam_solver/* directory.
+
+```shell
+cd wet-synthesis-route/cfd_pbe_openfoam_solver/
+./Allwmake
+cd ../cfd_onlyEnv/
+./Allwmake
+```
+
+Instead, to use the Compartment Wrapper, install the following package.
+
+```shell
+conda install mkl-service
+```
+
 Once the requirements have been installed, clone the Wet Synthesis Wrappers 
 repository and install them.
 
@@ -52,30 +76,6 @@ pico install simdome_wet_synthesis/ontology.wet_synthesis.yml
 
 # If you have issues using pico directly, you can use
 # python -m osp.core.pico install simdome_wet_synthesis/ontology.wet_synthesis.yml
-```
-
-To use the CFD-PBE Wrapper, it's necessary download the solver from the GitHub repository of Politecnico di Torino.
-
-```shell
-git clone https://github.com/mulmopro/wet-synthesis-route.git
-```
-
-After downloading it, enter the right directory and compile it.
-
-NOTE: before start the compilation, make sure to put the correct path to the sundials libraries
-in the *Allwmake* file in the *wet-synthesis-route/cfd_pbe_openfoam_solver/* fdirectory.
-
-```shell
-cd wet-synthesis-route/cfd_pbe_openfoam_solver/
-./Allwmake
-cd ../cfd_onlyEnv/
-./Allwmake
-```
-
-To use the Compartment Wrapper, install the following package.
-
-```shell
-conda install mkl-service
 ```
 
 <!---installation-end-880c326a-->
