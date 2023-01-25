@@ -31,7 +31,10 @@ The wet synthesis wrappers require a working installation of
 [OpenFOAM 8](https://openfoam.org/version/8/), 
 [SUNDIALS](https://github.com/LLNL/sundials) 
 ([v6.1.1](https://github.com/LLNL/sundials/releases/tag/v6.1.1) is known to 
-work) and [7-zip](https://www.7-zip.org/). Follow the links to find 
+work),
+[7-zip](https://www.7-zip.org/),
+[Anaconda3](https://www.anaconda.com/)
+([v4.8.2](https://repo.anaconda.com/archive/) is known to work). Follow the links to find 
 installation instructions for each tool.
 
 Once the requirements have been installed, clone the Wet Synthesis Wrappers 
@@ -51,6 +54,30 @@ pico install simdome_wet_synthesis/ontology.wet_synthesis.yml
 # python -m osp.core.pico install simdome_wet_synthesis/ontology.wet_synthesis.yml
 ```
 
+To use the CFD-PBE Wrapper, it's necessary download the solver from the GitHub repository of Politecnico di Torino.
+
+```shell
+git clone https://github.com/mulmopro/wet-synthesis-route.git
+```
+
+After downloading it, enter the right directory and compile it.
+
+NOTE: before start the compilation, make sure to put the correct path to the sundials libraries
+in the *Allwmake* file in the *wet-synthesis-route/cfd_pbe_openfoam_solver/* fdirectory.
+
+```shell
+cd wet-synthesis-route/cfd_pbe_openfoam_solver/
+./Allwmake
+cd ../cfd_onlyEnv/
+./Allwmake
+```
+
+To use the Compartment Wrapper, install the following package.
+
+```shell
+conda install mkl-service
+```
+
 <!---installation-end-880c326a-->
 
 <!---installation-start-f7fde43d-->
@@ -68,7 +95,7 @@ cd simdome_wet_synthesis
 and then run
 
 ```sh
-docker build -t simdome/wet_synthesis .
+docker build .
 ```
 
 to create the docker image. After that, run

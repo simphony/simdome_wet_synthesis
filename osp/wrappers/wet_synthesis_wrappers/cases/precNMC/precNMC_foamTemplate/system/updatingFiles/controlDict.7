@@ -101,11 +101,11 @@ functions
     {
         type              timeActivatedFileUpdate;
         libs              ("libutilityFunctionObjects.so");
-        fileToUpdate      "$FOAM_CASE/constant/odeSolver";
+        fileToUpdate      "$FOAM_CASE/system/fvSolution";
         timeVsFile
         (
-            (-1 "$FOAM_CASE/constant/updatingFiles/fvSolution.0") // 1e-6
-            ($t2 "$FOAM_CASE/constant/updatingFiles/fvSolution.1") // 5e-6
+            (-1 "$FOAM_CASE/system/updatingFiles/fvSolution.0") // 1e-6
+            ($t2 "$FOAM_CASE/system/updatingFiles/fvSolution.1") // 5e-6
         );
     }
 

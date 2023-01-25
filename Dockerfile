@@ -12,6 +12,12 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y \
     bash-completion bash-builtins libnss-wrapper vim nano tree curl unzip \
     python3-pip
 
+RUN wget -c https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh && \
+    /bin/bash Anaconda3-2020.02-Linux-x86_64.sh -bfp /usr/local && \
+    conda update conda && conda create --name wet-synthesis
+
+RUN conda install mkl-service
+
 RUN cd / && mkdir cmake && cd cmake && \
     CMAKE_VERSION=3.20.1 && \
     wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
@@ -57,8 +63,8 @@ WORKDIR $HOME/simdome/wrappers/simdome_wet_synthesis
 
 ENV PATH=$HOME/.local/bin:$PATH
 
-RUN pip install matplotlib scipy
+RUN pip install matplotlib scipy numpy sklearn mpi4py
 RUN pip install .
 RUN pico install ontology.wet_synthesis.yml
 
-CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash" ]
+CMD ["/bin/bash", "-c", "source /opt/openfoam8/etc/bashrc && /bin/bash && source activate wet-synthesis" ]
