@@ -16,7 +16,15 @@ setup(
     long_description=README_TEXT,
     install_requires=[
         'osp-core>=' + OSP_CORE_MIN + ', <' + OSP_CORE_MAX,
-    ],
+        "graphviz",
+        "numpy",
+        "PyYaml",
+        "scipy",
+        "scikit-learn",
+        "mpi4py",
+        "matplotlib",
+        "mkl-service",
+        ],
     packages=find_packages(exclude=("examples")),
     include_package_data=True,
     # entry_points={
