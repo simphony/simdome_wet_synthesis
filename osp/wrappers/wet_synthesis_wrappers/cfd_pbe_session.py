@@ -156,6 +156,10 @@ class CfdPbeSession(SimWrapperSession):
         self._insert_data(
             'Pressure', root_cuds_object, 'outlet_pressure', dataDict)
 
+        # Insert liquid density into the input dictionary
+        self._insert_data(
+            'LiquidDensity', root_cuds_object, 'liquid_density', dataDict)
+
         # Insert temperature into the input dictionary
         self._insert_data(
             'Temperature', root_cuds_object, 'temperature', dataDict)
