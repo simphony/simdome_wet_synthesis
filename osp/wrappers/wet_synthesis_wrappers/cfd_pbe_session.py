@@ -186,6 +186,8 @@ class CfdPbeSession(SimWrapperSession):
         if self._end_time is None:
             self._end_time = self._estimate_end_time(
                 root_cuds_object.get(oclass=wet_synthesis.Feed), 0.00306639) + 60
+        else:
+            self._end_time = self._end_time + 60
         if self._dummy:
             self._end_time = 0.0011
         dataDict.update({'end_time': self._end_time})
