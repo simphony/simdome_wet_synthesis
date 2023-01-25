@@ -183,6 +183,10 @@ ontology:
       wet_synthesis.value: ~
       wet_synthesis.unit: ~
 
+  LiquidDensity:
+    subclass_of:
+    - wet_synthesis.PhysicalQuantity
+  
   Pressure:
     subclass_of:
     - wet_synthesis.PhysicalQuantity
