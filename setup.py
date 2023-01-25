@@ -22,7 +22,7 @@ setup(
         "numpy",
         "PyYaml",
         "scipy",
-        "sklearn",
+        "scikit-learn",
         "mpi4py",
         "matplotlib"
         ],
