@@ -21,9 +21,10 @@ setup(
         "numpy",
         "PyYaml",
         "scipy",
-        "sklearn",
+        "scikit-learn",
         "mpi4py",
-        "matplotlib"
+        "matplotlib",
+        "mkl-service",
         ],
     python_requires=">=3.7",
     include_package_data=True,

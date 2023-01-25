@@ -177,6 +177,10 @@ class CompartmentSession(SimWrapperSession):
         self._insert_data(
             'Pressure', root_cuds_object, 'outlet_pressure', dataDict)
 
+        # Insert liquid density into the input dictionary
+        self._insert_data(
+            'LiquidDensity', root_cuds_object, 'liquid_density', dataDict)
+
         # Insert temperature into the input dictionary
         self._insert_data(
             'Temperature', root_cuds_object, 'temperature', dataDict)
@@ -497,6 +501,7 @@ class CompartmentSession(SimWrapperSession):
         density = dict['crystal_density']
         MW = dict['crystal_MW']
         KV = dict['shape_factor']
+        rhoLiq = dict['liquid_density']
 
         nodes = int(self._num_moments / 2)
 
@@ -510,6 +515,8 @@ class CompartmentSession(SimWrapperSession):
         lines = f.readlines()
         f.close()
         for i, line in enumerate(lines):
+            if 'rhoLiq: 0' in line:
+                lines[i] = line.replace('0', str(rhoLiq))
             if 'T: 0' in line:
                 lines[i] = line.replace('0', str(temp))
             if 'density: 0' in line:

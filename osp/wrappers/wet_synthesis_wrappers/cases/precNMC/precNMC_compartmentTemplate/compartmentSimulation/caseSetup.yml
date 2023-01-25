@@ -44,7 +44,7 @@ odeSolver:
 liquidProp: &liquidProp
     viscosity: 0.001  # (Pa.s)
     nu: 0.000001  # kinematic viscosity (m2/s)
-    rhoLiq: 998.2  # liquid density (kg/m3)
+    rhoLiq: 0  # liquid density (kg/m3)
     T: 0  # temperature in Kelvin
 
 feeds:
@@ -87,12 +87,12 @@ PBM:
             <<: *liquidProp
 
         Hydrodynamic:
-            C_adjust: 0.158
+            C_adjust: 0.913
             <<: *liquidProp
 
     aggrEfficiency:
         type: Exponential  # Exponential, Rational, Constant
-        A: 4.92
+        A: 6.36
         <<: *liquidProp
         # constValue: 1.0
 

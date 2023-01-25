@@ -20,6 +20,9 @@ def generate_cuds() -> Cuds:
         pressure = wet_synthesis.Pressure(value=101325, unit='Pa')
         wrapper.add(pressure)
 
+        liquid_density = wet_synthesis.LiquidDensity(value=998.2, unit='kg/m^3')
+        wrapper.add(liquid_density)
+
         temperature = wet_synthesis.Temperature(value=298.15, unit='K')
         wrapper.add(temperature)
 
