@@ -34,32 +34,8 @@ The wet synthesis wrappers require a working installation of
 work),
 [7-zip](https://www.7-zip.org/),
 [Anaconda3](https://www.anaconda.com/)
-([v4.8.2](https://repo.anaconda.com/archive/) is known to work). Follow the links to find 
+([v4.8.2](https://repo.anaconda.com/archive/) is known to work), and the [CFD-PBE solver from the GitHub repository of Politecnico di Torino](https://github.com/mulmopro/wet-synthesis-route). Follow the links to find 
 installation instructions for each tool.
-
-In addition, to use the CFD-PBE Wrapper, it's necessary download the solver from the GitHub repository of Politecnico di Torino.
-
-```shell
-git clone https://github.com/mulmopro/wet-synthesis-route.git
-```
-
-After downloading it, enter the right directory and compile it.
-
-NOTE: before start the compilation, make sure to put the correct path to the sundials libraries
-in the *Allwmake* file in the *wet-synthesis-route/cfd_pbe_openfoam_solver/* directory.
-
-```shell
-cd wet-synthesis-route/cfd_pbe_openfoam_solver/
-./Allwmake
-cd ../cfd_onlyEnv/
-./Allwmake
-```
-
-Instead, to use the Compartment Wrapper, install the following package.
-
-```shell
-conda install mkl-service
-```
 
 Once the requirements have been installed, clone the Wet Synthesis Wrappers 
 repository and install them.
