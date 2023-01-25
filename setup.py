@@ -24,8 +24,10 @@ setup(
         "scipy",
         "scikit-learn",
         "mpi4py",
-        "matplotlib"
-        ],
+        "matplotlib",
+        "mkl-service",
+    ],
+    packages=find_packages(exclude=("examples")),
     python_requires=">=3.7",
     include_package_data=True,
     # entry_points={
