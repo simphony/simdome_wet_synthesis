@@ -114,12 +114,6 @@ class CfdPbeSession(SimWrapperSession):
             os.getcwd(), "simulation-wetSynthCfdPbe-%s" % root_cuds_object.uid)
         shutil.copytree(self._case_template, self._case_dir)
 
-        if self._engine == "fluent":
-            division_dir = "$HOME/wet-synthesis-route/cfd_pbe_fluent_udf/Linux/"
-            name_list = ['precNMC_sources.c', 'precNMC_adjust.c', 'headerFiles/chemicalEquilibria.h', 'headerFiles/defMacros.h', 'headerFiles/externFuncs.h', 'headerFiles/externVars.h', 'headerFiles/momentCalc.h', 'headerFiles/particleProcesses.h']
-            for name in name_list:
-                shutil.copytree(division_dir+name, self._case_dir)
-
         # constant_dir = os.path.join(self._case_dir, 'constant')
         input_dir = os.path.join(self._case_dir, 'include')
         os.makedirs(input_dir, exist_ok=True)
@@ -210,13 +204,9 @@ class CfdPbeSession(SimWrapperSession):
         # replace the separator in the data based on the engine
         replace_char_in_keys(dataDict, "_", self._input_format["sep"])
 
-        if self._engine == "pisoPrecNMC":
-            # Write the inputs in the include file
-            self._write_dict(
-                dataDict, "input", "include", "include_original")
-        else:
-            # Modify files precNMC.scm, precNMC.jou and defMacros.h
-            self._add_input(dataDict)
+        # Write the inputs in the include file
+        self._write_dict(
+            dataDict, "input", "include", "include_original")
 
         self._initialized = True
 
@@ -319,16 +309,10 @@ class CfdPbeSession(SimWrapperSession):
 
     def _insert_feed(self, feed, dataDict):
 
-        if self._engine == 'fluent':
-            inputName = "velocity_" + feed.name
-            self._insert_data(
-                'FlowRate', feed, inputName, dataDict,
-                conversionFactor=self._conversionFactors["InletVelocity_{}".format(feed.name)])
-        else:
-            inputName = "flowrate_" + feed.name
-            self._insert_data(
-                'FlowRate', feed, inputName, dataDict,
-                conversionFactor=self._conversionFactors["FlowRate"])
+        inputName = "flowrate_" + feed.name
+        self._insert_data(
+            'FlowRate', feed, inputName, dataDict,
+            conversionFactor=self._conversionFactors["FlowRate"])
 
         for component in feed.get(oclass=wet_synthesis.Component):
             inputName = "conc_in_" + component.name
@@ -429,42 +413,6 @@ class CfdPbeSession(SimWrapperSession):
                 for key, value in dataDict.items():
                     print("%s%s %s%s" % (input_format["begin"], key, value,
                                          input_format["end"]), file=f)
-                    
-    def _add_input(self, dataDict):
-
-        file_list = ["precNMC.scm", "precNMC.jou"]
-
-        for key, value in dataDict.items():
-            for fileName in file_list:
-                path = self._case_dir+fileName
-                f = open(path, 'r')
-                lines=f.readlines()
-                f.close()
-
-                for i, line in enumerate(lines):
-                    if key in line:
-                        lines[i] = line.replace(key, value)
-
-                with open(path, 'w') as f:
-                    f.writelines(lines)
-
-        f = open(self._case_dir+"defMacros.h", 'r')
-        lines=f.readlines()
-        f.close()
-
-        for i, line in enumerate(lines):
-            if '298.15' in line:
-                lines[i] = line.replace('298.15', dataDict['temperature'])
-            if '3953' in line:
-                lines[i] = line.replace('3953', dataDict['crystal_density'])
-            if '92.3383' in line:
-                lines[i] = line.replace('92.3383', dataDict['crystal_MW'])
-            if '0.523599' in line:
-                lines[i] = line.replace('0.523599', dataDict['shape_factor'])
-
-        with open (self._case_dir+"defMacros.h", 'w') as f:
-            f.writelines(lines)
-
 
     def engine_specialization(self, engine):
         if engine == "pisoPrecNMC":
@@ -484,25 +432,5 @@ class CfdPbeSession(SimWrapperSession):
             self._conversionFactors = {
                 "RotationalSpeed": math.pi/30,
                 "FlowRate": 1.0/3.6e6}
-
-        elif engine == "fluent":
-            self._case_template = os.path.join(
-                self._case_source, "precNMC_fluentTemplate")
-
-            self._exec = [
-                "fluent", "3d", "-g", "-t", str(self._num_proc), "-i",
-                "precNMC.jou"]
-
-            self._mesh_info = {"name": "mesh_fluent", "ext": "msh.gz"}
-
-            self._input_format = {"begin": "", "end": ";", "sep": "_"}
-
-            self._conversionFactors = {
-                "RotationalSpeed": 1.0,
-                "InletVelocity_metals": 1.0/(3.6*6.9890206),
-                "InletVelocity_naoh": 1.0/(3.6*7.0185032),
-                "InletVelocity_nh3": 1.0/(3.6*7.0185032),
-                "FlowRate": 1.0/3.6e6}
-
         else:
             raise Exception("\nEngine \"" + engine + "\" not available\n")
