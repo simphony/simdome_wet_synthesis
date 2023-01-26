@@ -98,9 +98,9 @@ def get_cuds(wrapper: Cuds) -> Dict[str, Union[Cuds,List[Cuds]]]:
     cuds['temperature'] = wrapper.get(oclass=wet_synthesis.Temperature)[0]
     cuds['rotationalSpeed'] = wrapper.get(oclass=wet_synthesis.RotationalSpeed)[0]
     cuds['solidParticle'] = wrapper.get(oclass=wet_synthesis.SolidParticle)[0]
-    cuds['metals'] = wrapper.get(oclass=wet_synthesis.Feed)[0]
-    cuds['nh3'] = wrapper.get(oclass=wet_synthesis.Feed)[1]
-    cuds['naoh'] = wrapper.get(oclass=wet_synthesis.Feed)[2]
+    cuds['metals'] = wrapper.get(oclass=wet_synthesis.Feed(name='metals'))
+    cuds['nh3'] = wrapper.get(oclass=wet_synthesis.Feed(name='nh3'))
+    cuds['naoh'] = wrapper.get(oclass=wet_synthesis.Feed(name='naoh'))
     cuds['sizeDistribution'] = wrapper.get(oclass=wet_synthesis.SizeDistribution)[0]
 
     return cuds

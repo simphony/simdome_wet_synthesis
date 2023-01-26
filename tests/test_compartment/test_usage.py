@@ -28,19 +28,6 @@ class TestWrapper(unittest.TestCase):
     def test_compartment_model(self):
         """SimDOME session for cfd-pbe simulation"""
 
-        cuds = get_cuds(self.template_wrapper)
-        accuracy = cuds['accuracy_level']
-        press = cuds['pressure']
-        liquid_density = cuds['liquid_density']
-        temp = cuds['temperature']
-        rotation = cuds['rotationalSpeed']
-        solid = cuds['solidParticle']
-        metals = cuds['metals']
-        nh3 = cuds['nh3']
-        naoh = cuds['naoh']
-        sizeDist = cuds['sizeDistribution']
-        compartmentNet = cuds['compartmentNetwork']
-
         with CompartmentSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -48,14 +35,13 @@ class TestWrapper(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
 
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, liquid_density, temp, rotation, solid, metals, nh3, naoh, sizeDist, compartmentNet)
+            wrapper.add(*self.template_wrapper.get())
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
             pretty_print(wrapper.get(oclass=wet_synthesis.CompartmentNetwork)[0])
 
             # Run the session
             session.run()
-            self.assertTrue(session._initialized)
 
             # Get the results
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])

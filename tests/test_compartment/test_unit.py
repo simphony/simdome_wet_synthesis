@@ -45,6 +45,7 @@ class TestCompartmentSession(unittest.TestCase):
             session._case_dir = os.path.join(currentDir, 'data')
 
             res = session._extract_moments()
+            print(res)
 
             self.assertIsInstance(res, list)
 

@@ -36,11 +36,9 @@ class TestWrapper(unittest.TestCase):
                 delete_simulation_files=True, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
-            try:
-                self.assertIsInstance(str(session), str)
-                self.assertIn('cfd-pbe', str(session).lower())
-            finally:
-                session.close()
+
+            self.assertIsInstance(str(session), str)
+            self.assertIn('cfd-pbe', str(session).lower())
 
     def test_load_from_backend(self):
         """Tests the `_load_from_backend` method of the session."""
@@ -67,18 +65,6 @@ class TestWrapper(unittest.TestCase):
     def test_apply_addedd(self):
         """Tests the `_apply_added` method of the session."""
 
-        cuds = get_cuds(self.template_wrapper)
-        accuracy = cuds['accuracy_level']
-        press = cuds['pressure']
-        liquid_density = cuds['liquid_density']
-        temp = cuds['temperature']
-        rotation = cuds['rotationalSpeed']
-        solid = cuds['solidParticle']
-        metals = cuds['metals']
-        nh3 = cuds['nh3']
-        naoh = cuds['naoh']
-        sizeDist = cuds['sizeDistribution']
-
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
@@ -86,7 +72,7 @@ class TestWrapper(unittest.TestCase):
                 num_proc=1, dummy=True) as session:
             
             wrapper = wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, liquid_density, temp, rotation, solid, metals, nh3, naoh, sizeDist)
+            wrapper.add(*self.template_wrapper.get())
 
             session._apply_added(wrapper, 0)
 
@@ -98,25 +84,13 @@ class TestWrapper(unittest.TestCase):
         Running the simulation for the first time involves calling the
         `_initialize` method, the `_run` method and then the 'close' method.
         """
-        cuds = get_cuds(self.template_wrapper)
-        accuracy = cuds['accuracy_level']
-        press = cuds['pressure']
-        liquid_density = cuds['liquid_density']
-        temp = cuds['temperature']
-        rotation = cuds['rotationalSpeed']
-        solid = cuds['solidParticle']
-        metals = cuds['metals']
-        nh3 = cuds['nh3']
-        naoh = cuds['naoh']
-        sizeDist = cuds['sizeDistribution']
-
         with CfdPbeSession(
                 engine="pisoPrecNMC", case="precNMC",
                 delete_simulation_files=True, end_time=0.0011,
                 write_interval=1, num_moments=4,
                 num_proc=1, dummy=True) as session:
             wrapper =  wet_synthesis.WetSynthesisWrapper(session=session)
-            wrapper.add(accuracy, press, liquid_density, temp, rotation, solid, metals, nh3, naoh, sizeDist)
+            wrapper.add(*self.template_wrapper.get())
 
             pretty_print(wrapper.get(oclass=wet_synthesis.SizeDistribution)[0])
 
