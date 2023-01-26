@@ -557,7 +557,7 @@ class CompartmentSession(SimWrapperSession):
             f.writelines(lines3)
             f.close()
 
-        name_list = ['/extract_info.py', '/react_division.py', '/importScripts/read_files.py']
+        name_list = ['/react_division.py', '/importScripts/read_files.py']
 
         for name in name_list:
             f = open(target_dir+name, 'r')
@@ -570,6 +570,19 @@ class CompartmentSession(SimWrapperSession):
             
             with open(target_dir+name, 'w') as file:
                 file.writelines(lines)
+
+        f = open(target_dir+'/extract_info.py', 'r')
+        lines = f.readlines()
+        f.close()
+
+        for i, line in enumerate(lines):
+            if "time_dir = '0'" in line:
+                lines[i] = line.replace("0", str(self._end_time))
+            if "density = '0'" in line:
+                lines[i] = line.replace("0", str(rhoLiq))
+        
+        with open(target_dir+'/extract_info.py', 'w') as file:
+            file.writelines(lines)
         
  
         

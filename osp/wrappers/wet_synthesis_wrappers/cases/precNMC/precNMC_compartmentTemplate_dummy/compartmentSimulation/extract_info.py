@@ -30,7 +30,7 @@ def main(argv):
 
         time_dir = '0'
 
-        density = 998.2
+        density = 0
 
         inOutPatches = {
             'inlets':{

@@ -373,6 +373,9 @@ class TestCompartmentSession(unittest.TestCase):
                 for line in lines:
                     if 'time_dir =' in line:
                         self.assertIn("time_dir = '0.0011'", line)
+                    if name == name_list[0]:
+                        if 'density =' in line:
+                            self.assertIn("density = 998.2", line)
                 os.remove(input_dir+name)
             os.rename(input_dir+'/extract_info_bkp.py', input_dir+'/extract_info.py')
             os.rename(input_dir+'/react_division_bkp.py', input_dir+'/react_division.py')
