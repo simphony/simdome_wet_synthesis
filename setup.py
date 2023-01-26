@@ -11,7 +11,8 @@ setup(
     name=NAME,
     version=VERSION,
     author='MuSyChEn research group at Politecnico di Torino',
-    description='A collection of wrappers for wet-phase synthesis of Ni-Mn-Co hydroxide',
+    description='A collection of wrappers for wet-phase synthesis of Ni-Mn-Co '
+                'hydroxide',
     keywords='SimDOME, CUDS, Precipitation, NMC hydroxide',
     long_description=README_TEXT,
     packages=find_packages(exclude=("examples", "tests")),
@@ -25,7 +26,7 @@ setup(
         "mpi4py",
         "matplotlib",
         "mkl-service",
-        ],
+    ],
     python_requires=">=3.7",
     include_package_data=True,
     # entry_points={
