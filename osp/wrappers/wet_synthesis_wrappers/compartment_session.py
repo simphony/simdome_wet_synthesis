@@ -578,7 +578,7 @@ class CompartmentSession(SimWrapperSession):
         for i, line in enumerate(lines):
             if "time_dir = '0'" in line:
                 lines[i] = line.replace("0", str(self._end_time))
-            if "density = '0'" in line:
+            if "density = 0" in line:
                 lines[i] = line.replace("0", str(rhoLiq))
         
         with open(target_dir+'/extract_info.py', 'w') as file:
