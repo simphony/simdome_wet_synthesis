@@ -45,9 +45,12 @@ class TestCfdPbeSession(unittest.TestCase):
             session._case_dir = os.path.join(currentDir, 'data')
 
             res = session._extract_moments()
-            print(res)
 
             self.assertIsInstance(res, list)
+            self.assertEqual(3.403027e+19, res[0])
+            self.assertEqual(2169865000000.0, res[1])
+            self.assertEqual(252453.9, res[2])
+            self.assertEqual(0.04381031, res[3])
 
     def test_update_size_dist_cud(self):
         """Test the _update_size_dist_cud method"""

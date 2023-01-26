@@ -45,9 +45,13 @@ class TestCompartmentSession(unittest.TestCase):
             session._case_dir = os.path.join(currentDir, 'data')
 
             res = session._extract_moments()
-            print(res)
 
             self.assertIsInstance(res, list)
+            self.assertEqual(40829676388399.44, res[0])
+            self.assertEqual(20137550.07859055, res[1])
+            self.assertEqual(890.1952208933541, res[2])
+            self.assertEqual(0.04010312155452568, res[3])
+            
 
     def test_update_size_dist_cud(self):
         """Test the _update_size_dist_cud method"""
