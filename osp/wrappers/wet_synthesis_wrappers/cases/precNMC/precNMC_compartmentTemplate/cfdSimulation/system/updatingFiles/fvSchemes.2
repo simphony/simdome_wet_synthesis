@@ -17,7 +17,7 @@ FoamFile
 
 ddtSchemes
 {
-    default         steadyState;
+    default         Euler;
 }
 
 gradSchemes
@@ -27,7 +27,6 @@ gradSchemes
     grad(U)         Gauss linear;
     grad(k)         Gauss linear;
     grad(epsilon)   Gauss linear;
-    "grad\(p_env[1-3]\)"    Gauss linear;
 }
 
 divSchemes
@@ -37,8 +36,6 @@ divSchemes
     div(phi,U)        Gauss linearUpwind grad(U); // linearUpwind grad(U)
     div(phi,k)        Gauss vanLeer; // vanLeer
     div(phi,epsilon)  Gauss vanLeer; // vanLeer
-
-    "div\(phi,p_env[1-3]\)"    Gauss upwind;
 
     div((nuEff*dev2(T(grad(U)))))   Gauss linear;
 }

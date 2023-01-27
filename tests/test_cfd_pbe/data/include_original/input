@@ -1,0 +1,42 @@
+conc_in_nickel              1.6;
+conc_in_manganese           0.2;
+conc_in_cobalt              0.2;
+conc_in_nh3                 10.0;
+conc_in_na                  5.0;
+conc_in_so4                 2.0;
+
+conc_mixed_nh3              1.0;
+
+flowrate_metals  4.25859e-07;
+flowrate_naoh    3.40735e-07;
+flowrate_nh3     8.51837e-08;
+
+angular_velocity  20.944;
+temperature 0.0;
+outlet_pressure   1e5;
+
+crystal_density    3953;
+crystal_MW         92.3383;
+shape_factor       0.523599;
+
+liquid_density    998.2;
+
+inlet_turb_intensity  0.005;
+inlet_hydraulic_diameter  0.003;
+inlet_nut     0.0;
+outlet_nut     0.0;
+
+internal_U       (0 0 0);
+internal_p       0.0;
+internal_nut     0.0;
+internal_epsilon 0.01;
+internal_k       0.001;
+
+backflow_epsilon   1e-6;
+backflow_k         1e-7;
+
+
+
+
+
+

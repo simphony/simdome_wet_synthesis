@@ -76,48 +76,48 @@ sources
 
     aggregation
     {
-        // Brownian
-        // {
-            // type             "brownianMotion";
-            // T                $temperature;
-            // rhoLiq           $liquid_density;
+        Brownian
+        {
+            type             "brownianMotion";
+            T                $temperature;
+            rhoLiq           $liquid_density;
 
-            // efficiency
-            // {
-            //     type         "bridgeFormation";
-            //     A            2301441.817408508431293303;
-            //     rhoLiq       $liquid_density;
-            // }
-        // }
+            efficiency
+            {
+                type         "bridgeFormation";
+                A            2301441.817408508431293303;
+                rhoLiq       $liquid_density;
+            }
+        }
 
-        // TurbFluct
-        // {
-            // type             "turbulentCollision";
-            // CT               8.184647881347898392;
+        TurbFluct
+        {
+            type             "turbulentCollision";
+            CT               8.184647881347898392;
 
-            // efficiency
-            // {
-            //     type         "bridgeFormation";
-            //     A            2301441.817408508431293303;
-            //     rhoLiq       $liquid_density;
-            // }
-        // }
+            efficiency
+            {
+                type         "bridgeFormation";
+                A            2301441.817408508431293303;
+                rhoLiq       $liquid_density;
+            }
+        }
     }
 
     breakage
     {
-        // TurbFluct
-        // {
-        //     type             "powerLaw"; // powerLaw, constantRate
-        //     Cbr              1e-6;
-        //     gamma            1.0;
+        TurbFluct
+        {
+            type             "powerLaw"; // powerLaw, constantRate
+            Cbr              1e-6;
+            gamma            1.0;
 
-        //     daughterDistribution
-        //     {
-        //         // erosion, Laakkonen, parabolic, symmetric, uniform
-        //         type         "symmetric";
-        //     }
-        // }
+            daughterDistribution
+            {
+                // erosion, Laakkonen, parabolic, symmetric, uniform
+                type         "symmetric";
+            }
+        }
     }
 }
 

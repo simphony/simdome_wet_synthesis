@@ -1,0 +1,30 @@
+#!/bin/bash
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Add the required library path
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/sundials/instdir/lib
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    echo -e "\nError:"
+    echo -e "OpenFOAM run functions not found\n" >&2
+    exit $ERROR_CODE
+fi
+
+application=$(getApplication)
+
+if [ $1 -eq 1 ]; then
+    $application
+else
+    $application -parallel
+fi
+
+ERROR_CODE=$?
+if [ $ERROR_CODE -ne 0 ]; then
+    echo -e "\nError:"
+    echo -e "$application failed\n" >&2
+    exit $ERROR_CODE
+fi
